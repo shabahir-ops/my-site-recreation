@@ -64,9 +64,10 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
 
 <Layout theme="fintask" title="Fintask">
   <!-- Hero -->
-  <Section aria-labelledby="hero-title" paddingBottom="small" align="center">
+  <Section data-animate="onload" aria-labelledby="hero-title" paddingBottom="small" align="center">
     <ContentWrapper
       slot="background"
+      data-reveal-at="0.32"
       class="fintask-callouts"
       column1Class="fintask-callouts_activity position-absolute"
       column2Class="fintask-callouts_progress position-absolute radius-none"
@@ -82,23 +83,24 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
       style="padding-top: .375rem; row-gap: clamp(3rem, 5.3vw, 4.75rem); --h1-margin-bottom: var(--space-5); --text-large-line-height: 1.3; --text-large-font-weight: var(--primary-medium);"
     >
       <Heading tag="h1" id="hero-title">
-        <span class="fintask-title-line">
+        <span class="fintask-title-line" data-reveal-at="0">
           Manage Your
           <span class="fintask-title-team"><Img src={team} variant="densities" width={118} transparent loading="eager" /></span>
           Team’s
         </span>
-        <span class="fintask-title-line">
+        <span class="fintask-title-line" data-reveal-at="0.08">
           <span class="fintask-title-task"><Img src={task} variant="densities" width={290} transparent loading="eager" /></span>
           <span style="color: var(--ft-orange)">Productivity</span>
         </span>
       </Heading>
-      <Paragraph variant="large" style="max-width: min(100%, 31.1875rem); text-box: normal; color: color-mix(in srgb, currentColor 72%, transparent);">
+      <Paragraph data-reveal-at="0.16" variant="large" style="max-width: min(100%, 31.1875rem); text-box: normal; color: color-mix(in srgb, currentColor 72%, transparent);">
         Plan projects, stay on track, and deliver on time without overworking your team.
       </Paragraph>
-      <ButtonWrapper marginTop="7">
+      <ButtonWrapper data-reveal-at="0.24" marginTop="7">
         <Button variant="pill" disabled>Try Now - Free!</Button>
       </ButtonWrapper>
       <Paragraph
+        data-reveal-at="0.32"
         variant="small"
         class="flex-horizontal-nowrap align-items-center margin-top-5"
         style="gap: .375rem; color: color-mix(in srgb, currentColor 80%, transparent);"
@@ -108,11 +110,13 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
         <Img src={sitejabber} variant="densities" width={80} transparent alt="Sitejabber" />
       </Paragraph>
       <Overlay
+        data-reveal-at="0.4"
         slot="column2"
         aria-hidden="true"
         style="top: 1%; height: 98%; border-radius: var(--ft-feature-radius); background: var(--ft-hero-gradient); transform: rotate(4deg);"
       />
       <Img
+        data-reveal-at="0.4"
         slot="column2"
         src={calendar}
         variant="constrained"
@@ -469,3 +473,32 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
     </ContentWrapper>
   </Section>
 </Layout>
+
+<script>
+  import { gsap } from "gsap";
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  if (!reducedMotion.matches) {
+    for (const section of document.querySelectorAll('[data-animate="onload"]')) {
+      const entrance = gsap.timeline({
+        paused: true,
+        defaults: { duration: 0.6, ease: "power2.out" },
+        onComplete: finish,
+      });
+
+      function finish() {
+        reducedMotion.removeEventListener("change", finish);
+        entrance.revert();
+      }
+
+      for (const item of section.querySelectorAll<HTMLElement>("[data-reveal-at]")) {
+        const start = Number(item.dataset.revealAt);
+        entrance.from(item, { opacity: 0, y: 16 }, Number.isFinite(start) ? Math.max(0, start) : 0);
+      }
+
+      reducedMotion.addEventListener("change", finish);
+      entrance.play();
+    }
+  }
+</script>

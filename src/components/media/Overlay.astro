@@ -20,6 +20,7 @@ const {
   render = true,
   variant = "solid",
   strength = 50,
+  style,
   class: className,
   ...rest
 } = Astro.props;
@@ -28,7 +29,9 @@ const {
 {render && (
   <div
     class:list={["overlay", variant !== "solid" && variant, className]}
-    style={`--_strength: ${strength};`}
+    style={typeof style === "string"
+      ? `--_strength: ${strength}; ${style}`
+      : { "--_strength": strength, ...style }}
     {...rest}
   />
 )}
