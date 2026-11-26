@@ -1,0 +1,165 @@
+---
+import dashboard from "../../assets/fintask-dashboard.jpg";
+import baseCss from "../../styles/base.css?raw";
+
+interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+}
+const { render = true } = Astro.props;
+const sections = ["Color", "Typography", "Components", "Layout"];
+const colors = [
+  ["Action violet", "--ft-violet", "Primary actions and integration panel"],
+  ["Violet edge", "--ft-violet-edge", "CTA outlines and hard shadows"],
+  ["Orange", "--ft-orange", "Hero emphasis and first advantage panel"],
+  ["Forest", "--ft-forest", "Complex-projects panel"],
+  ["Citron", "--ft-citron", "Featured pricing tier"],
+  ["Cream", "--ft-cream", "Task progress card and final CTA"],
+  ["Lilac", "--ft-lilac", "Plan calendar card"],
+  ["Ice", "--ft-ice", "Collaboration card"],
+  ["Ink", "--ft-ink", "Headings and body copy"],
+  ["Paper", "--ft-paper", "Page and card surfaces"],
+  ["Rule", "--ft-rule", "Review card borders"],
+];
+// Read the editor's root variables so the static guide also reflects swatch edits.
+const rootTokens = new Map<string, string>();
+for (const [, block] of baseCss.matchAll(/:root\s*\{([^{}]*)\}/g)) {
+  for (const [, token, value] of block.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)) {
+    rootTokens.set(token, value.trim());
+  }
+}
+function swatchValue(token: string) {
+  const seen = new Set<string>();
+  while (!seen.has(token)) {
+    seen.add(token);
+    const value = rootTokens.get(token);
+    if (!value) break;
+    const alias = /^var\(\s*(--[\w-]+)\s*\)$/.exec(value);
+    if (!alias) return value.startsWith("#") ? value.toUpperCase() : value;
+    token = alias[1];
+  }
+  throw new Error(`Invalid Fintask swatch reference: ${token}`);
+}
+const type = [
+  ["hero", "Hero", "Cabinet Grotesk Bold · 72 / 88", "Manage Your Team’s Productivity"],
+  ["section", "Section heading", "Cabinet Grotesk Bold · 56 / 64", "Choose a plan that fits your team."],
+  ["card", "Card heading", "Cabinet Grotesk Bold · 32 / auto", "Plan Calendar"],
+  ["quote", "Testimonial", "Switzer Medium · 24 / 36", "“I love Fintask! Use it daily too.”"],
+  ["body", "Body", "Switzer Regular · 20 / 30", "Plan projects, stay on track, and deliver on time without overworking your team."],
+  ["small", "Supporting copy", "Switzer Regular · 18 / 28", "Unlimited projects, clients"],
+  ["button", "Action label", "Public Sans Bold · 18 / auto", "Try Now - Free!"],
+  ["note", "Section label", "Caveat Regular · 32 / auto · −2% tracking", "Advantages"],
+];
+const flow = [
+  ["Navigation & hero", "A floating navigation bar leads into a centered headline, violet CTA, rating, and oversized dashboard preview."],
+  ["Integrations & features", "A logo strip introduces three pastel cards for task progress, calendar planning, and collaboration."],
+  ["Advantages", "Three wide panels pair white copy with product illustrations, moving from orange to forest to violet."],
+  ["Pricing", "A billing switch sits above three plans. The taller citron card draws attention to Elite Team."],
+  ["Reviews & contact", "Nine quotes form three staggered columns. A white fade and outlined action lead into the support form."],
+  ["Closing CTA & footer", "A cream sign-up panel precedes the footer’s navigation, subscription form, social links, and legal row."],
+];
+---
+{render && <main class="fintask-guide_wrap">
+  <div id="top" class="fintask-guide_hero">
+    <div>
+      <p class="fintask-guide_note">Design foundations</p>
+      <h1>Fintask<br/>style guide<span>.</span></h1>
+      <p class="fintask-guide_intro">The colors, type, and component patterns behind the Fintask landing page.</p>
+      <a class="fintask-guide_source" href="https://www.figma.com/design/iVt84m2zQIXUn0t6FkpMzg/?node-id=4707-59855">View source frame ↗</a>
+    </div>
+    <figure class="fintask-guide_art"><img src={dashboard.src} width={dashboard.width} height={dashboard.height} alt="Fintask dashboard with a team calendar and project sidebar" /></figure>
+  </div>
+  <nav class="fintask-guide_index" aria-label="Guide sections">{sections.map(s => <a href={"#" + s.toLowerCase()}>{s}</a>)}</nav>
+  <section id="color"><h2>Color</h2>
+    <ul class="fintask-guide_palette">{colors.map(([label, token, use]) => <li>
+      <i style={`background:var(${token})`} aria-hidden="true"></i>
+      <strong>{label}</strong><code>{swatchValue(token)}</code><p>{use}</p><code>{token}</code>
+    </li>)}</ul>
+  </section>
+  <section id="typography"><h2>Typography</h2>
+    <p>Sizes and line heights below are measured in pixels on the 1440 px desktop frame. The guide scales headings down on smaller screens.</p>
+    <dl class="fintask-guide_type">{type.map(([role, label, specs, sample]) => <div><dt><strong>{label}</strong><small>{specs}</small></dt><dd data-type={role}>{sample}</dd></div>)}</dl>
+  </section>
+  <section id="components"><h2>Components</h2>
+    <div class="fintask-guide_examples">
+      <article><h3>Calls to action</h3><div class="fintask-guide_buttons"><span>Try Now - Free!</span><span>See more</span></div><p>16 × 32 padding, 52 radius. The primary pill has a 4 px stroke and 7 px shadow. The outlined pill uses 3 px and 4 px.</p></article>
+      <article><h3>Pricing card</h3><div class="fintask-guide_plan"><small>Elite Team</small><strong>$12.99</strong><small>Per Month</small></div><p>338 px wide with 32 px padding and 12 px corners. Reserve citron for the featured plan.</p></article>
+      <article><h3>Review card</h3><blockquote>“I love Fintask! Use it daily too.”</blockquote><p>400 px wide with 12 px corners, a 1 px border, and 24 × 56 px padding. The quote and byline sit 32 px apart.</p></article>
+    </div>
+  </section>
+  <section id="layout"><h2>Layout & spacing</h2>
+    <p>At 1440 px, the navigation spans 1170 px. The advantage panels span 1280 px with 80 px outer margins and 48 px corners. Feature cards use 24 px corners.</p>
+    <div class="fintask-guide_scale">{[8,12,16,24,32,40].map((n,i) => <div><i style={'width:var(--space-' + (i+1) + ')'}></i><strong>{n} px</strong><code>--space-{i+1}</code></div>)}</div>
+    <h3>Landing page structure</h3><ol class="fintask-guide_flow">{flow.map(([title, detail]) => <li><strong>{title}</strong><p>{detail}</p></li>)}</ol>
+  </section>
+</main>}
+<style is:global>
+@layer components {
+  .fintask-guide_wrap {
+    max-width: var(--ft-content-width); width: calc(100% - 2 * var(--site-margin)); margin-inline: auto; padding-bottom: var(--space-8);
+    font: 400 1rem/1.5 var(--ft-body-family); color: var(--ft-ink);
+    & :where(h1,h2,h3,p,ul,ol,dl,dd,figure,blockquote) { margin: 0; }
+    & :where(h1,h2,h3) { font-family: var(--ft-heading-family); font-weight: 700; letter-spacing: 0; }
+    & h1 { font-size: var(--h1); line-height: var(--h1-line-height); }
+    & h1 span { color: var(--ft-orange); }
+    & h2 { font-size: var(--h2); line-height: var(--h2-line-height); margin-bottom: var(--space-4); }
+    & h3 { font-size: var(--h4); line-height: 1.15; }
+    & section { padding-block: var(--space-8); border-top: var(--border-width) solid var(--ft-rule); }
+    & section > p { max-width: 75ch; font-size: var(--text-large); }
+    & small, & code { font-size: .875rem; }
+    & code { color: var(--ft-muted); }
+    & a { color: inherit; }
+    & a:focus-visible { outline: .1875rem solid var(--ft-violet-edge); outline-offset: .25rem; }
+    & article { display: flex; flex-direction: column; gap: var(--space-4); }
+    & blockquote { border: var(--border-width) solid var(--ft-rule); padding: var(--space-4) min(10%, var(--ft-review-padding-inline)); border-radius: var(--ft-card-radius); font-size: var(--h5); font-weight: 500; }
+    @media (width >= 48rem) {
+      & .fintask-guide_hero { grid-template-columns: 1fr 1fr; }
+      & .fintask-guide_examples { grid-template-columns: repeat(3,minmax(0,1fr)); }
+      & .fintask-guide_type > div { grid-template-columns: 30% 1fr; }
+    }
+  }
+  .fintask-guide_index { display: flex; flex-wrap: wrap; gap: var(--space-4); padding-bottom: var(--space-4); }
+  .fintask-guide_wrap section[id] { scroll-margin-top: 9rem; }
+  .fintask-guide_hero { display: grid; gap: var(--space-7); padding-block: var(--space-8); align-items: center; }
+  .fintask-guide_note { margin-bottom: var(--space-3); font: 400 2rem/1 var(--ft-note-family); letter-spacing: var(--ft-note-tracking); color: var(--ft-violet-edge); }
+  .fintask-guide_intro { max-width: 36ch; margin-block: var(--space-4); font-size: var(--text-large); }
+  .fintask-guide_source { text-underline-offset: .25em; }
+  .fintask-guide_art { background: var(--ft-hero-gradient); border-radius: var(--ft-feature-radius); padding: 8% 6% 0; overflow: hidden; aspect-ratio: 1.52;
+    & img { width: 100%; height: auto; display: block; border-radius: var(--ft-card-radius); transform: rotate(-3deg); }
+  }
+  .fintask-guide_palette,.fintask-guide_flow { padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,14rem),1fr)); gap: var(--space-5); }
+  .fintask-guide_palette li { display: grid; grid-template-columns: 1fr auto; align-content: start; gap: .35rem;
+    & i { display: block; height: 5rem; border-radius: var(--ft-card-radius); box-shadow: inset 0 0 0 var(--border-width) rgb(0 0 0 / 10%); margin-bottom: .45rem; }
+    & :where(i,p,code:last-child) { grid-column: 1 / -1; }
+  }
+  .fintask-guide_type { margin-top: var(--space-5);
+    & > div { display: grid; align-items: center; gap: var(--space-3); padding-block: var(--space-4); border-top: var(--border-width) solid var(--ft-rule); }
+    & dt > * { display: block; }
+    & small { color: var(--ft-muted); }
+    & [data-type=hero] { font: 700 var(--h1)/var(--h1-line-height) var(--ft-heading-family); }
+    & [data-type=section] { font: 700 var(--h2)/var(--h2-line-height) var(--ft-heading-family); }
+    & [data-type=card] { font: 700 var(--h4)/normal var(--ft-heading-family); }
+    & [data-type=quote] { font: 500 var(--h5)/1.5 var(--ft-body-family); }
+    & [data-type=body] { font-size: var(--text-large); line-height: var(--text-large-line-height); }
+    & [data-type=small] { font-size: var(--text-main); line-height: var(--text-main-line-height); }
+    & [data-type=button] { font: 700 var(--text-main)/normal var(--ft-action-family); }
+    & [data-type=note] { font: 400 2rem/normal var(--ft-note-family); letter-spacing: var(--ft-note-tracking); }
+  }
+  .fintask-guide_examples { display: grid; gap: var(--space-6); }
+  .fintask-guide_buttons { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: start;
+    & span { display: inline-flex; gap: var(--space-2); align-items: center; padding: var(--space-3) var(--space-5); border-radius: var(--ft-button-radius); font: 700 var(--text-main)/1 var(--ft-action-family); border: var(--ft-action-stroke) solid var(--ft-violet-edge); background: var(--ft-action); color: var(--button-text); box-shadow: var(--ft-action-shadow); }
+    & span::before { content: ''; width: .75em; aspect-ratio: 1; border: .12em solid currentColor; border-radius: 50%; }
+    & span + span { background: var(--ft-paper); color: var(--ft-violet-edge); border-width: var(--ft-outline-stroke); box-shadow: var(--ft-outline-shadow); }
+  }
+  .fintask-guide_plan { display: grid; padding: var(--space-5); background: var(--ft-featured-plan); border-radius: var(--ft-card-radius); max-width: var(--ft-pricing-width);
+    & strong { font: 700 var(--h2)/1.15 var(--ft-heading-family); }
+  }
+  .fintask-guide_scale { display: flex; flex-wrap: wrap; gap: var(--space-6); margin-block: var(--space-5) var(--space-8);
+    & div { display: grid; gap: .3rem; }
+    & i { display: block; height: .75rem; border-radius: var(--ft-card-radius); background: var(--ft-violet); }
+  }
+  .fintask-guide_flow { margin-top: var(--space-4); grid-template-columns: repeat(auto-fit,minmax(min(100%,20rem),1fr));
+    & li { border-top: var(--border-width) solid var(--ft-rule); padding-top: var(--space-3); }
+  }
+}
+</style>

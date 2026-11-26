@@ -30,7 +30,7 @@ type Tag =
 type Kind =
   | {
       /** Button type. */
-      variant?: "main";
+      variant?: "main" | "pill";
       /** Visual emphasis. */
       emphasis?: Emphasis;
       label?: never;
@@ -81,7 +81,7 @@ type Props = {
 type AllProps = HTMLAttributes<"button"> &
   Omit<HTMLAttributes<"a">, "type"> & {
     render?: boolean;
-    variant?: "main" | "link" | "play" | "close" | "arrow";
+    variant?: "main" | "pill" | "link" | "play" | "close" | "arrow";
     emphasis?: Emphasis;
     label?: string;
     pressed?: boolean;
@@ -113,7 +113,7 @@ const tagAttrs = isLink
 
 const marks = { play, close, arrow };
 /* main and link are written, the rest are marks with a label. */
-const isWritten = variant === "main" || variant === "link";
+const isWritten = variant === "main" || variant === "pill" || variant === "link";
 const content = isWritten ? await slotContent(Astro.slots) : "";
 
 const named = {
@@ -182,6 +182,26 @@ const named = {
           color: var(--button-text-hover);
           border-color: var(--button-border-hover);
         }
+      }
+      &.pill {
+        border: 0;
+        border-radius: var(--ft-button-radius, var(--radius-round));
+        outline: var(--ft-action-stroke, 0.25rem) solid var(--button-border);
+        outline-offset: -0.125rem;
+        box-shadow: var(--ft-action-shadow, 0.4375rem 0.4375rem 0 var(--button-border));
+        min-height: 3.334rem;
+        padding: 1rem 2rem;
+        gap: 0.75rem;
+        font: 700 1.125rem/1.2 var(--ft-action-family, var(--primary-family));
+        &::before {
+          content: "";
+          width: 1.25rem;
+          height: 1.25rem;
+          border: 0.1875rem solid currentColor;
+          border-radius: 50%;
+        }
+        &:disabled { opacity: 1; }
+        &:focus-visible { outline-offset: 0.35rem; }
       }
       &.secondary {
         --button-background: var(--button-2-background);

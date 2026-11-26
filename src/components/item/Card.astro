@@ -7,8 +7,22 @@ import Button from "@/components/Button.astro";
 import ButtonWrapper from "@/components/wrapper/ButtonWrapper.astro";
 import Img from "@/components/media/Img.astro";
 import Overlay from "@/components/media/Overlay.astro";
+import { slotContent } from "@/utils/slots.ts";
 
 type ImageSource = ImageMetadata | string;
+
+type PlanDetails = {
+  /** Price for this billing period, or a contact label. */
+  price: string;
+  /** Billing period. Omit for a contact plan. */
+  billingPeriod?: "monthly" | "yearly";
+  /** Benefits included in the plan. */
+  benefits: string[];
+  /** Trial offer shown below the price. */
+  trial?: string;
+  /** Highlight this plan. */
+  featured?: boolean;
+};
 
 type Base = HTMLAttributes<"div"> & {
   /** Set to `false` to omit the component. */
@@ -26,7 +40,7 @@ type Base = HTMLAttributes<"div"> & {
   /** Button destination. Omit for a `<button>`. */
   buttonHref?: string;
   /** Card layout. */
-  variant?: "default" | "cover" | "stacked";
+  variant?: "default" | "cover" | "stacked" | "feature" | "plan" | "review";
   /** Color theme of element and its children. */
   theme?: "inherit" | "light" | "dark" | "brand" | "invert";
 };
@@ -39,12 +53,39 @@ type Props = Base &
         imageAlt?: never;
       }
     | {
-        variant: "cover";
+        variant: "cover" | "feature";
         /** Image source. */
         image?: ImageSource;
         /** Image alt text. Omit for decorative images. */
         imageAlt?: string;
       }
+    | {
+        variant: "review";
+        /** Reviewer's name. */
+        author: string;
+        /** Reviewer's role. */
+        byline: string;
+        /** Quoted review. */
+        text: string;
+        /** Reviewer portrait. */
+        image: ImageSource;
+        imageAlt?: never;
+        heading?: never;
+        headingTag?: never;
+        eyebrow?: never;
+        buttonLabel?: never;
+        buttonHref?: never;
+      }
+    | (PlanDetails & {
+        variant: "plan";
+        /** Image source. */
+        image?: ImageSource;
+        /** Image alt text. Omit for decorative images. */
+        imageAlt?: string;
+        eyebrow?: never;
+        buttonLabel?: never;
+        buttonHref?: never;
+      })
     | {
         variant: "stacked";
         /** Color theme of element and its children. */
@@ -56,7 +97,9 @@ type Props = Base &
       }
   );
 
-type AllProps = Base & {
+type AllProps = Base & Partial<PlanDetails> & {
+  author?: string;
+  byline?: string;
   image?: ImageSource;
   imageAlt?: string;
 };
@@ -73,12 +116,28 @@ const {
   theme = "inherit",
   image,
   imageAlt,
+  price,
+  billingPeriod,
+  benefits,
+  trial,
+  featured,
+  author,
+  byline,
   class: className,
   ...rest
 } = Astro.props as AllProps;
 
-const hasImage = variant !== "default" && !!image;
-const hasContent = !!(eyebrow || heading || text || buttonLabel);
+const isFeature = variant === "feature";
+const isPlan = variant === "plan";
+const isReview = variant === "review";
+const Tag = isReview ? "figure" : "div";
+const planAction = isPlan && render ? await slotContent(Astro.slots) : "";
+const earlyAction = isPlan && render ? await slotContent(Astro.slots, "beforeBenefits") : "";
+const standardLayout = !isPlan && !isReview;
+const hasImage = standardLayout && variant !== "default" && !!image;
+const hasContent = standardLayout && !!(eyebrow || heading || text || buttonLabel);
+const hasReview = isReview && text && author && byline && image;
+const hasPlan = isPlan && heading && price;
 const hasTheme = variant !== "stacked" && theme !== "inherit";
 
 /* The button each variant closes with, so a set of cards reads as one system.
@@ -96,10 +155,10 @@ if (import.meta.env.DEV && render) {
   }
   if (variant === "default" && image) {
     console.warn(
-      '[lumos] <Card variant="default"> holds no image, so `image` was dropped. Use the cover or stacked variant to show it.',
+      '[lumos] <Card variant="default"> holds no image, so `image` was dropped. Use the cover, stacked, or feature variant to show it.',
     );
   }
-  if (variant !== "default" && !image) {
+  if (standardLayout && variant !== "default" && !image) {
     console.warn(
       `[lumos] <Card variant="${variant}"> has no \`image\`, so it renders as a plain card.`,
     );
@@ -107,19 +166,53 @@ if (import.meta.env.DEV && render) {
 }
 ---
 
-{render && (hasContent || hasImage) && (
-  <div
+{render && (hasContent || hasImage || hasPlan || hasReview) && (
+  <Tag
     class:list={[
       "card_wrap",
       variant !== "default" && variant,
+      isPlan && featured && "featured",
       hasTheme && `theme-${theme}`,
       className,
     ]}
     {...rest}
   >
+    {isReview && image && (
+      <>
+        <blockquote class="card_quote"><Paragraph><span>{text}</span></Paragraph></blockquote>
+        <figcaption class="card_byline">
+          <Img src={image} variant="densities" width={55} transparent />
+          <strong class="card_author">{author}</strong>
+          <span class="card_role">{byline}</span>
+        </figcaption>
+      </>
+    )}
+    {isPlan && (
+      <>
+        <header class="card_plan-header">
+          {image && <Img src={image} variant="densities" width={56} transparent alt={imageAlt} />}
+          <Heading tag={headingTag} variant="h5">{heading}</Heading>
+        </header>
+        <div class="card_plan-price">
+          <p class:list={["card_plan-amount", !billingPeriod && "contact"]}>{price}</p>
+          <Paragraph variant="large">
+            {text}
+            {billingPeriod && <noscript>, billed {billingPeriod}</noscript>}
+          </Paragraph>
+          {trial && <span class="card_plan-trial">{trial}</span>}
+        </div>
+        {earlyAction && <ButtonWrapper marginTop="0"><Fragment set:html={earlyAction} /></ButtonWrapper>}
+        {!!benefits?.length && (
+          <ul class="card_plan-benefits" role="list">
+            {benefits.map((benefit) => <li>{benefit}</li>)}
+          </ul>
+        )}
+        {planAction && <ButtonWrapper marginTop="0"><Fragment set:html={planAction} /></ButtonWrapper>}
+      </>
+    )}
     {hasImage && (
       <div class="card_visual">
-        <Img src={image!} alt={imageAlt} />
+        <Img src={image!} alt={imageAlt} transparent={isFeature} />
         {variant === "cover" && <Overlay variant="gradient" />}
       </div>
     )}
@@ -128,10 +221,10 @@ if (import.meta.env.DEV && render) {
         <Eyebrow>
           <Fragment set:html={eyebrow} />
         </Eyebrow>
-        <Heading tag={headingTag} variant="h5">
+        <Heading tag={headingTag} variant={isFeature ? "h4" : "h5"}>
           <Fragment set:html={heading} />
         </Heading>
-        <Paragraph>
+        <Paragraph variant={isFeature ? "large" : "inherit"}>
           <Fragment set:html={text} />
         </Paragraph>
         <ButtonWrapper>
@@ -145,7 +238,7 @@ if (import.meta.env.DEV && render) {
         </ButtonWrapper>
       </div>
     )}
-  </div>
+  </Tag>
 )}
 
 <style is:global>
@@ -169,6 +262,188 @@ if (import.meta.env.DEV && render) {
       &.stacked {
         background-color: transparent;
         overflow: visible;
+      }
+    }
+
+    .card_wrap.feature {
+      --_alignment: start;
+      --_card-radius: var(--ft-feature-radius, var(--radius-main));
+      max-width: 22.8125rem;
+      justify-self: center;
+      gap: 0;
+      isolation: isolate;
+      overflow: visible;
+      background: transparent;
+      border-radius: var(--_card-radius);
+
+      &::before, &::after {
+        content: "";
+        position: absolute;
+        border-radius: inherit;
+        pointer-events: none;
+      }
+      &::before {
+        z-index: -2;
+        inset: 15% 5% -2% 0;
+        background: var(--feature-shadow, rgb(0 0 0 / 3%));
+        transform: rotate(var(--feature-tilt, -4deg));
+      }
+      &::after {
+        z-index: -1;
+        inset: 0;
+        background: var(--feature-surface, var(--background-2));
+        outline: var(--border-width) solid var(--feature-outline, var(--border));
+      }
+      & > .card_content {
+        position: relative;
+        padding: var(--space-6) var(--space-4) var(--space-5)
+          calc(var(--space-4) + 2.0625rem);
+        --h4-margin-bottom: .25rem;
+        --h4-line-height: 1.25;
+      }
+      & > .card_visual {
+        order: 1;
+        width: 85.3%;
+        border-radius: 0 var(--_card-radius) var(--_card-radius) var(--_card-radius);
+        box-shadow: .375rem -.25rem 3rem var(--feature-glow, transparent);
+      }
+      & > .card_visual > .image { height: auto; }
+      & .card_content:has(> .heading)::before {
+        content: "";
+        position: absolute;
+        top: calc(var(--space-6) + .5rem);
+        left: var(--space-4);
+        width: 1.3125rem;
+        height: 1.3125rem;
+        border: .1875rem solid var(--ft-orange, var(--heading-accent));
+        border-radius: 50%;
+      }
+      & .heading, & .text { text-box: normal; }
+      & .text { color: color-mix(in srgb, currentColor 80%, transparent); text-wrap: wrap; }
+    }
+
+    .card_wrap.review {
+      margin: 0;
+      gap: var(--space-5);
+      padding: var(--space-4) min(14%, var(--ft-review-padding-inline));
+      border-radius: var(--ft-card-radius, var(--radius-main));
+      background: var(--background);
+      box-shadow: inset 0 0 0 var(--border-width) var(--border);
+      color: var(--text);
+      text-align: start;
+    }
+    .card_quote {
+      margin: 0;
+      font: var(--primary-medium) var(--h5)/1.5 var(--primary-family);
+      overflow-wrap: anywhere;
+      & > p { margin: 0; text-box: normal; text-wrap: wrap; }
+      & span { white-space: pre-line; }
+    }
+    .card_byline {
+      display: grid;
+      grid-template-columns: 4rem minmax(0, 1fr);
+      align-content: start;
+      align-items: start;
+      column-gap: var(--space-3);
+      row-gap: .125rem;
+      min-height: 4rem;
+      margin-inline-end: calc(-1 * var(--space-4));
+      & > img { grid-row: 1 / 3; justify-self: center; margin-top: .2857rem; }
+    }
+    .card_author { font: 600 var(--text-large)/1.6 var(--primary-family); }
+    .card_role {
+      color: color-mix(in srgb, currentColor 72%, var(--background));
+      font: 400 var(--review-role-size, var(--text-main))/1.34 var(--review-role-family, var(--primary-family));
+    }
+
+    .card_wrap.plan {
+      --_alignment: start;
+      --button-2-background: var(--ft-paper, var(--background));
+      --button-2-text: var(--ft-violet-edge, var(--text));
+      --button-2-border: var(--ft-violet-edge, var(--border));
+      --ft-action-stroke: var(--ft-outline-stroke);
+      --ft-action-shadow: var(--ft-outline-shadow);
+      align-items: start;
+      gap: var(--space-6);
+      padding: var(--space-5);
+      border-radius: var(--ft-card-radius, var(--radius-main));
+      border: var(--border-width) solid color-mix(in srgb, var(--text) 8%, transparent);
+      background-color: var(--background);
+      text-align: start;
+      overflow: visible;
+
+      &.featured {
+        --_edge: #edf500;
+        background-color: var(--ft-featured-plan);
+        border-color: var(--_edge);
+        outline: .25rem solid var(--_edge);
+        box-shadow: .75rem .75rem 0 var(--_edge);
+        --_check-bg: var(--ft-violet);
+        --_check-ink: var(--ft-paper);
+      }
+    }
+    .card_plan-header, .card_plan-price {
+      display: grid;
+      justify-items: start;
+      gap: .75rem;
+      --h5-margin-top: 0;
+      --h5-margin-bottom: 0;
+      --h5-line-height: 1.25;
+      --h5-letter-spacing: 0em;
+      --h5-font-family: var(--ft-heading-family, var(--primary-family));
+      & > :is(h1, h2, h3, h4, h5, h6, p) { text-box: normal; }
+    }
+    .card_plan-price {
+      gap: .25rem;
+      --text-large-margin-top: 0;
+      --text-large-margin-bottom: 0;
+      --text-large-line-height: 1.3;
+    }
+    .card_plan-amount {
+      margin: 0;
+      font: 700 var(--h2)/1.23 var(--ft-heading-family, var(--primary-family));
+      &.contact { font-size: min(var(--h3), 2.5rem); }
+    }
+    .card_plan-trial {
+      margin-top: .625rem;
+      padding: .625rem 1rem;
+      border-radius: var(--radius-round);
+      background: var(--ft-orange);
+      color: var(--ft-paper);
+      font: 700 .875rem/1.15 var(--ft-action-family, var(--primary-family));
+    }
+    .card_plan-benefits {
+      display: grid;
+      width: 100%;
+      gap: var(--space-4);
+      list-style: none;
+      margin: 0;
+      padding: .25rem;
+      font: 400 var(--text-main)/var(--text-main-line-height) var(--primary-family);
+      & li {
+        display: grid;
+        grid-template-columns: 2rem 1fr;
+        column-gap: .875rem;
+        align-items: start;
+      }
+      & li::before {
+        content: "";
+        width: 1.5rem;
+        height: 1.5rem;
+        margin: .25rem;
+        border-radius: 50%;
+        background: var(--_check-bg, color-mix(in srgb, var(--ft-violet) 10%, transparent));
+        grid-area: 1 / 1;
+      }
+      & li::after {
+        content: "";
+        grid-area: 1 / 1;
+        width: .7rem;
+        height: .4rem;
+        margin: .73rem 0 0 .66rem;
+        border: solid var(--_check-ink, var(--ft-violet));
+        border-width: 0 0 .12rem .12rem;
+        transform: rotate(-45deg);
       }
     }
 
@@ -231,7 +506,7 @@ if (import.meta.env.DEV && render) {
       }
     }
 
-    .card_wrap:has(.button_wrap) {
+    .card_wrap:not(.plan):has(.button_wrap) {
       .button_wrap::after {
         content: "";
         position: absolute;

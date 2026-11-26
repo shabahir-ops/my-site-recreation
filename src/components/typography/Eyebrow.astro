@@ -8,7 +8,7 @@ type Props = HTMLAttributes<"div"> & {
   /** HTML element. */
   tag?: "span" | "p" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
   /** Eyebrow style. */
-  variant?: "default" | "tag";
+  variant?: "default" | "tag" | "annotation";
 };
 
 const {
@@ -27,7 +27,7 @@ const content = await slotContent(Astro.slots);
     class:list={["eyebrow_wrap", variant !== "default" && variant, className]}
     {...rest}
   >
-    {variant === "default" && (
+    {variant !== "tag" && (
       <span class="eyebrow_marker" aria-hidden="true" />
     )}
     <Tag class="eyebrow_text text-style-small">
@@ -49,6 +49,23 @@ const content = await slotContent(Astro.slots);
         color: var(--background);
         padding: var(--space-1) var(--space-2);
         border-radius: var(--radius-small);
+      }
+      &.annotation {
+        gap: .25rem;
+        & .eyebrow_marker {
+          width: 1rem;
+          height: 1rem;
+          border: .125rem solid var(--annotation-accent, var(--ft-orange, var(--heading-accent)));
+          background: color-mix(in srgb, var(--annotation-accent, var(--ft-orange, var(--heading-accent))) 8%, transparent);
+          border-radius: 50%;
+        }
+        & .eyebrow_text {
+          font: 400 var(--h4)/1.25 var(--ft-note-family, var(--primary-family));
+          letter-spacing: var(--ft-note-tracking, normal);
+          text-decoration: line-through;
+          text-box: normal;
+          color: var(--feature-label, var(--text-2));
+        }
       }
       .eyebrow_marker {
         flex: none;

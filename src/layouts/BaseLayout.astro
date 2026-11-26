@@ -8,7 +8,7 @@ import type { SeoProps } from "@/types.ts";
 
 type Props = SeoProps & {
   /** Theme for the whole page. `inherit` leaves the root defaults in place. */
-  theme?: "inherit" | "light" | "dark" | "brand";
+  theme?: "inherit" | "light" | "dark" | "brand" | "fintask";
   /**
    * Fix the nav over the page rather than letting it stick in flow, so the
    * first section starts underneath it. Give that section
@@ -21,7 +21,7 @@ const { theme = "inherit", overlap = false, ...seo } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" class:list={[theme !== "inherit" && `theme-${theme}`]}>
+<html lang="en" class:list={[theme === "fintask" ? "fintask" : theme !== "inherit" && `theme-${theme}`]}>
   <head>
     <BaseHead {...seo} />
     <slot name="head" />
@@ -32,6 +32,6 @@ const { theme = "inherit", overlap = false, ...seo } = Astro.props;
     <main id="main" tabindex="-1">
       <slot />
     </main>
-    <Footer />
+    <Footer variant={theme === "fintask" ? "fintask" : "default"} />
   </body>
 </html>

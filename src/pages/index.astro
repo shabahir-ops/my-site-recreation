@@ -1,41 +1,471 @@
 ---
 import Layout from "@/layouts/BaseLayout.astro";
 import Section from "@/components/wrapper/Section.astro";
-import Heading from "@/components/typography/Heading.astro";
-import Eyebrow from "@/components/typography/Eyebrow.astro";
-import Img from "@/components/media/Img.astro";
-import lumos_background from "@/assets/graphics/lumos-background.svg";
-import Icon from "@/components/media/Icon.astro";
-import logo_icon from "@/assets/logo/logo-icon.svg";
 import ContentWrapper from "@/components/wrapper/ContentWrapper.astro";
+import Grid from "@/components/wrapper/Grid.astro";
+import Card from "@/components/item/Card.astro";
+import Tabs from "@/components/interactive/Tabs.astro";
+import TabLink from "@/components/interactive/TabLink.astro";
+import Form from "@/components/form/Form.astro";
+import Input from "@/components/form/Input.astro";
+import Eyebrow from "@/components/typography/Eyebrow.astro";
+import Heading from "@/components/typography/Heading.astro";
+import Paragraph from "@/components/typography/Paragraph.astro";
+import ButtonWrapper from "@/components/wrapper/ButtonWrapper.astro";
+import Button from "@/components/Button.astro";
+import Img from "@/components/media/Img.astro";
+import Overlay from "@/components/media/Overlay.astro";
+import team from "../assets/graphics/fintask-team.png";
+import task from "../assets/graphics/fintask-task.png";
+import progress from "../assets/graphics/fintask-progress.png";
+import activity from "../assets/graphics/fintask-activity.png";
+import check from "../assets/graphics/fintask-rating-check.png";
+import sitejabber from "../assets/graphics/fintask-sitejabber.png";
+import calendar from "../assets/graphics/fintask-hero-calendar.png";
+import featureTasks from "../assets/graphics/fintask-feature-task-progress.png";
+import featureCalendar from "../assets/graphics/fintask-feature-plan-calendar.png";
+import featureCollaboration from "../assets/graphics/fintask-feature-collaborations.png";
+import workflowPreview from "../assets/graphics/fintask-advantage-workflow.webp";
+import projectsPreview from "../assets/graphics/fintask-advantage-projects.webp";
+import integrationsPreview from "../assets/graphics/fintask-advantage-apps.webp";
+import workflowIcon from "../assets/icons/advantage-workflow.svg";
+import featuresIcon from "../assets/icons/advantage-features.svg";
+import teamIcon from "../assets/icons/advantage-team.svg";
+import statusIcon from "../assets/icons/advantage-status.svg";
+import individualsIcon from "../assets/icons/plan-individuals.svg";
+import eliteTeamIcon from "../assets/icons/plan-team.svg";
+import startupIcon from "../assets/icons/plan-startup.svg";
+import jillianBenbow from "../assets/graphics/fintask-review-jillian-benbow.png";
+import pilliafTom from "../assets/graphics/fintask-review-pilliaf-tom.png";
+import montesKei from "../assets/graphics/fintask-review-montes-kei.png";
+import jillian from "../assets/graphics/fintask-review-jillian.png";
+import jillianBenbowMac from "../assets/graphics/fintask-review-jillian-benbow-mac.png";
+import entersJK from "../assets/graphics/fintask-review-enters-jk.png";
+import benbow from "../assets/graphics/fintask-review-benbow.png";
+import jillianBenbowTeam from "../assets/graphics/fintask-review-jillian-benbow-team.png";
+import supportLeft from "../assets/graphics/fintask-support-left.png";
+import supportCenter from "../assets/graphics/fintask-support-center.png";
+import supportRight from "../assets/graphics/fintask-support-right.png";
+import trialTopLeft from "../assets/graphics/fintask-trial-top-left.svg";
+import trialBottomRight from "../assets/graphics/fintask-trial-bottom-right.svg";
+import trialCheck from "../assets/icons/trial-check.svg";
+import notion from "../assets/logo/notion.svg";
+import googleCalendar from "../assets/logo/google-calendar.svg";
+import trello from "../assets/logo/trello.svg";
+import slack from "../assets/logo/slack.svg";
+import outlook from "../assets/logo/outlook.svg";
+
+const billingPeriods = ["monthly", "yearly"] as const;
+const subscriptionEndpoint = import.meta.env.PUBLIC_FINTASK_SUBSCRIBE_URL?.trim();
+const signupUrl = import.meta.env.PUBLIC_FINTASK_SIGNUP_URL?.trim();
+const trialDetails = ["Try FREE for 14 days", "No card required", "No switching banks"];
+const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset: -.146rem;";
 ---
 
-<Layout theme="dark">
-  <Section
-    paddingBottom="even"
-    containerClass="flex-grow"
-    paddingTop="even"
-    class="flex-grow"
-    style="min-height: calc(100svh - var(--nav-height));"
-  >
+<Layout theme="fintask" title="Fintask">
+  <!-- Hero -->
+  <Section aria-labelledby="hero-title" paddingBottom="small" align="center">
     <ContentWrapper
-      class="flex-grow theme-brand"
-      variant="card"
-      mediaOpacity={100}
+      slot="background"
+      class="fintask-callouts"
+      column1Class="fintask-callouts_activity position-absolute"
+      column2Class="fintask-callouts_progress position-absolute radius-none"
+      style={`--_visual-ratio: ${progress.width} / ${progress.height}`}
+      aria-hidden="true"
     >
-      <Icon src={logo_icon} variant="large" />
-      <Heading variant="display" tag="h1" class="margin-block-8">
-        Style Guide
+      <Img src={activity} variant="densities" width={269} transparent />
+      <Img slot="column2" src={progress} variant="densities" width={174} transparent />
+    </ContentWrapper>
+    <ContentWrapper
+      centered
+      column2Class="fintask-calendar margin-inline-auto"
+      style="padding-top: .375rem; row-gap: clamp(3rem, 5.3vw, 4.75rem); --h1-margin-bottom: var(--space-5); --text-large-line-height: 1.3; --text-large-font-weight: var(--primary-medium);"
+    >
+      <Heading tag="h1" id="hero-title">
+        <span class="fintask-title-line">
+          Manage Your
+          <span class="fintask-title-team"><Img src={team} variant="densities" width={118} transparent loading="eager" /></span>
+          Team’s
+        </span>
+        <span class="fintask-title-line">
+          <span class="fintask-title-task"><Img src={task} variant="densities" width={290} transparent loading="eager" /></span>
+          <span style="color: var(--ft-orange)">Productivity</span>
+        </span>
       </Heading>
-      <Eyebrow variant="tag">v1.0.3</Eyebrow>
+      <Paragraph variant="large" style="max-width: min(100%, 31.1875rem); text-box: normal; color: color-mix(in srgb, currentColor 72%, transparent);">
+        Plan projects, stay on track, and deliver on time without overworking your team.
+      </Paragraph>
+      <ButtonWrapper marginTop="7">
+        <Button variant="pill" disabled>Try Now - Free!</Button>
+      </ButtonWrapper>
+      <Paragraph
+        variant="small"
+        class="flex-horizontal-nowrap align-items-center margin-top-5"
+        style="gap: .375rem; color: color-mix(in srgb, currentColor 80%, transparent);"
+      >
+        <Img src={check} variant="densities" width={16} transparent />
+        Excellent 4.9 out of 5
+        <Img src={sitejabber} variant="densities" width={80} transparent alt="Sitejabber" />
+      </Paragraph>
+      <Overlay
+        slot="column2"
+        aria-hidden="true"
+        style="top: 1%; height: 98%; border-radius: var(--ft-feature-radius); background: var(--ft-hero-gradient); transform: rotate(4deg);"
+      />
       <Img
         slot="column2"
-        src={lumos_background}
-        width={1920}
-        height={1080}
-        loading="eager"
-        fetchPriority="high"
+        src={calendar}
+        variant="constrained"
+        width={1203}
+        sizes="(min-width: 81rem) 75.2rem, 100vw"
+        transparent
+        class="position-relative height-auto align-self-start radius-none"
+        style="width: 107.2%; max-width: none;"
+        alt="Fintask project calendar with scheduled tasks, assignees, and deadlines."
       />
+    </ContentWrapper>
+  </Section>
+  <!-- Integrations -->
+  <Section
+    id="integrations"
+    aria-labelledby="integrations-title"
+    paddingTop="none"
+    paddingBottom="small"
+    align="center"
+    style="padding-top: calc(var(--space-7) + .125rem); scroll-margin-top: 9rem;"
+  >
+    <ContentWrapper centered>
+      <Heading
+        tag="h2"
+        variant="inherit"
+        id="integrations-title"
+        style="font: 400 var(--h5)/1.35 var(--ft-action-family); color: color-mix(in srgb, currentColor 48%, transparent); text-box: normal;"
+      >Our native plants are listed below&nbsp; integrations</Heading>
+      <Grid
+        xsmall={2}
+        small={3}
+        large={5}
+        class="grid-tracks-content justify-content-center align-items-center gap-small gap-row-4 margin-top-6"
+      >
+        <Img src={notion} variant="densities" width={121} transparent alt="Notion" />
+        <Img src={googleCalendar} variant="densities" width={147} transparent alt="Google Calendar" />
+        <Img src={trello} variant="densities" width={162} transparent alt="Trello" />
+        <Img src={slack} variant="densities" width={127} transparent alt="Slack" />
+        <Img src={outlook} variant="densities" width={174} transparent alt="Microsoft Outlook" />
+      </Grid>
+    </ContentWrapper>
+  </Section>
+  <!-- Features -->
+  <Section
+    id="features"
+    aria-labelledby="features-title"
+    paddingTop="small"
+    paddingBottom="small"
+    align="center"
+    gap="small"
+    containerAttrs={{ style: "max-width: 78.3125rem;" }}
+    style="padding-top: calc(var(--section-space-small) - .5rem); scroll-margin-top: 9rem;"
+  >
+    <ContentWrapper centered>
+      <Eyebrow variant="annotation" style="--feature-label: #cbcbcb;">Features</Eyebrow>
+      <Heading tag="h2" id="features-title" class="margin-top-2" style="text-box: normal;">
+        The features<br />Both familiar and new.
+      </Heading>
+    </ContentWrapper>
+    <Grid medium={2} large={3} class="gap-small gap-row-7">
+      <Card
+        variant="feature"
+        heading="Task Prograss"
+        text="Send scheduling links guests love"
+        image={featureTasks}
+        imageAlt="November 15 task schedule with assigned team members"
+        style="--feature-surface: var(--ft-cream); --feature-outline: #ffd15a3d; --feature-glow: #dae0001f; --feature-tilt: -8deg;"
+      />
+      <Card
+        variant="feature"
+        heading="Plan Calendar"
+        text="Send scheduling links guests love"
+        image={featureCalendar}
+        imageAlt="Weekly calendar showing design and bug-fix tasks"
+        style="--feature-surface: var(--ft-lilac); --feature-outline: color-mix(in srgb, var(--ft-violet) 16%, transparent); --feature-glow: color-mix(in srgb, var(--ft-violet) 10%, transparent); --feature-shadow: var(--ft-ink); --feature-tilt: -5deg;"
+      />
+      <Card
+        variant="feature"
+        heading="Collaborations"
+        text="Send scheduling links guests love"
+        image={featureCollaboration}
+        imageAlt="Teammates collaborating on a UI animations task"
+        style="--feature-surface: var(--ft-ice); --feature-outline: #1abcfe29; --feature-glow: #1abcfe1a; --feature-tilt: 4deg;"
+      />
+    </Grid>
+  </Section>
+  <!-- Advantages -->
+  <Section
+    id="advantages"
+    aria-labelledby="advantages-title"
+    align="center"
+    paddingTop="small"
+    paddingBottom="small"
+    gap="small"
+    containerAttrs={{ style: "max-width: var(--ft-content-width);" }}
+    style="scroll-margin-top: 9rem;"
+  >
+    <ContentWrapper centered>
+      <Eyebrow variant="annotation" style="--annotation-accent: var(--ft-violet); --feature-label: #bcbcbc;">Advantages</Eyebrow>
+      <Heading tag="h2" id="advantages-title" class="margin-top-2" style="max-width: 18ch; text-box: normal; --h2-margin-bottom: var(--space-4);">
+        A task manager you can trust for teams
+      </Heading>
+      <Paragraph variant="large" style="text-box: normal;">
+        Plan projects, stay on track, and deliver on time without overworking your team.
+      </Paragraph>
+      <ButtonWrapper marginTop="5">
+        <Button element="link" variant="pill" href="#advantage-workflow">Get Start</Button>
+      </ButtonWrapper>
+    </ContentWrapper>
+    <Grid variant="stack" class="gap-small" style="--stack-top: calc(var(--space-6) + 6.25rem); --panel-text: var(--ft-paper);">
+      <ContentWrapper
+        variant="panel"
+        id="advantage-workflow"
+        role="group"
+        aria-labelledby="workflow-title"
+        style="--panel-color: var(--ft-orange); --panel-ratio: 610 / 502; --panel-min-height: 36rem; scroll-margin-top: var(--stack-top);"
+      >
+        <Heading tag="h3" variant="h2" id="workflow-title">Simple to use, powerful when need.</Heading>
+        <Paragraph variant="large">Create tasks and projects, upload files, and add comments. With Teamwork everything is in one central location.</Paragraph>
+        <ul class="advantage-points">
+          <li><Img src={workflowIcon} variant="densities" width={40} transparent /><Paragraph tag="span">Costumized your workflow.</Paragraph></li>
+          <li><Img src={featuresIcon} variant="densities" width={40} transparent /><Paragraph tag="span">Extra features for complex projects.</Paragraph></li>
+        </ul>
+        <Img slot="column2" src={workflowPreview} variant="constrained" width={610} sizes="(min-width: 80rem) 38rem, (min-width: 48rem) 48vw, 100vw" transparent alt="Fintask project board with bug fixes, assignees and progress updates" />
+      </ContentWrapper>
+      <ContentWrapper
+        variant="panel"
+        role="group"
+        aria-labelledby="projects-title"
+        style="--panel-color: var(--ft-forest); --panel-ratio: 644 / 474;"
+      >
+        <Heading tag="h3" variant="h2" id="projects-title">Take complex projects with ease</Heading>
+        <Paragraph variant="large">Use status features updates to see how your project is progressing and what’s left to do.</Paragraph>
+        <ul class="advantage-points">
+          <li><Img src={teamIcon} variant="densities" width={40} transparent /><Paragraph tag="span">Keep everyone accountable.</Paragraph></li>
+          <li><Img src={statusIcon} variant="densities" width={40} transparent /><Paragraph tag="span">Make sure your status.</Paragraph></li>
+        </ul>
+        <Img slot="column2" src={projectsPreview} variant="constrained" width={644} sizes="(min-width: 80rem) 40rem, (min-width: 48rem) 48vw, 100vw" transparent alt="Project dashboard with progress bars, a chart, a task schedule and team cards" />
+      </ContentWrapper>
+      <ContentWrapper
+        variant="panel"
+        role="group"
+        aria-labelledby="apps-title"
+        style="--panel-color: var(--ft-violet); --panel-ratio: 618 / 448;"
+      >
+        <Heading tag="h3" variant="h2" id="apps-title">Create calm with integrations.</Heading>
+        <Paragraph variant="large" maxWidth={43}>Connect Fintask with all the favorite tools you’ve already use.</Paragraph>
+        <ButtonWrapper marginTop="5">
+          <Button element="link" variant="pill" href="#integrations" style="--button-background: var(--ft-orange); --button-border: #ae3011; --ft-action-shadow: .4rem .4rem 0 var(--button-border);">Explore integrations</Button>
+        </ButtonWrapper>
+        <Img slot="column2" src={integrationsPreview} variant="constrained" width={618} sizes="(min-width: 80rem) 39rem, (min-width: 48rem) 48vw, 100vw" transparent alt="Slack, Dropbox, Miro and Notion integration cards" />
+      </ContentWrapper>
+    </Grid>
+  </Section>
+  <!-- Pricing -->
+  <Section
+    id="pricing"
+    aria-labelledby="pricing-title"
+    paddingTop="small"
+    align="center"
+    gap="4"
+    containerAttrs={{ style: "max-width: 66.6875rem;" }}
+    style="scroll-margin-top: var(--nav-height);"
+  >
+    <ContentWrapper centered>
+      <Eyebrow variant="annotation" style="--feature-label: #bcbcbc;">Pricing</Eyebrow>
+      <Heading tag="h2" id="pricing-title" class="margin-top-2" style="max-width: 18ch; text-box: normal; --h2-margin-bottom: 0;">
+        Choose a plan that fits your team.
+      </Heading>
+      <Paragraph id="billing-label" variant="large" class="margin-top-5" style="text-box: normal; --text-large-line-height: 1.3; --text-large-font-weight: var(--primary-medium);">
+        Choose your billing
+      </Paragraph>
+    </ContentWrapper>
+    <Tabs id="billing" variant="segmented" labelledBy="billing-label">
+      <Fragment slot="links">
+        <TabLink>Month</TabLink>
+        <TabLink aria-describedby="yearly-savings">Yearly</TabLink>
+      </Fragment>
+      <span slot="note" id="yearly-savings">Save 20%</span>
+      {billingPeriods.map(period => (
+        <Grid medium={2} large={3} class="gap-4 gap-row-6 align-items-start" data-default-panel={period === "yearly" || undefined}>
+          <Card
+            variant="plan"
+            heading="Individuals"
+            image={individualsIcon}
+            price={period === "yearly" ? "$9.99" : "$12.49"}
+            billingPeriod={period}
+            text="Per month"
+            benefits={[
+              "Unlimited projects, clients",
+              "Personal desktop activity tracking",
+              "Add up to 5 members to your project",
+            ]}
+          >
+            <Button variant="pill" emphasis="secondary" disabled>Buy now</Button>
+          </Card>
+          <Card
+            variant="plan"
+            heading="Elite Team"
+            image={eliteTeamIcon}
+            price={period === "yearly" ? "$12.99" : "$16.24"}
+            billingPeriod={period}
+            text="Per month"
+            trial="15-day free trial"
+            featured
+            benefits={[
+              "Everything in Starter +",
+              "Centralized control of labor costs and billable rates for team members",
+              "Single sign-on (SSO)",
+            ]}
+          >
+            <Button variant="pill" disabled>Buy now</Button>
+          </Card>
+          <Card
+            variant="plan"
+            heading="Startup"
+            image={startupIcon}
+            price="Contact"
+            text="us to pre-order"
+            benefits={[
+              "Everything in Premium +",
+              "Manage multiple workspaces under one organization",
+              "Expert training and assistance",
+            ]}
+          >
+            <Button slot="beforeBenefits" variant="pill" emphasis="secondary" disabled>Contact now</Button>
+          </Card>
+        </Grid>
+      ))}
+    </Tabs>
+  </Section>
+  <!-- Reviews -->
+  <Section
+    id="reviews"
+    aria-labelledby="reviews-title"
+    align="center"
+    paddingTop="none"
+    paddingBottom="small"
+    containerAttrs={{ style: "max-width: calc(3 * var(--ft-review-width) + 2 * var(--space-4)); gap: calc(var(--space-8) + .5rem);" }}
+    style="--masonry-offset: 1.25rem; padding-top: calc(var(--space-5) - .25rem); scroll-margin-top: var(--nav-height);"
+  >
+    <ContentWrapper centered>
+      <Eyebrow variant="annotation" style="--feature-label: #bcbcbc;">Reviews</Eyebrow>
+      <Heading tag="h2" id="reviews-title" class="margin-top-2" style="text-box: normal;">Loved by product people</Heading>
+    </ContentWrapper>
+    <Grid id="review-list" variant="masonry" medium={2} large={3}>
+      <Card variant="review" author="Jillian Benbow" byline="Senior Community Manager" image={jillianBenbow}
+        text="“Fintask The best!”" />
+      <Card variant="review" author="Pilliaf Tom" byline="Senior Manager" image={pilliafTom}
+        text={`“Hey Fintaskyou all did an amazing job. It's seriously saving me so much time.
+
+- Screenshots don't 👌disappear right away
+- I can draw & add arrows to screenshots instantly`} />
+      <Card variant="review" author="Jillian Benbow" byline="Senior Community Manager" image={jillianBenbow}
+        text="Fintask is my favourite" />
+      <Card variant="review" author="Montes Kei" byline="Developer at CBN" image={montesKei}
+        text="“Can't recommend Fintask enough 👌”" />
+      <Card variant="review" author="Jillian" byline="Community Manager" image={jillian}
+        text="“FintaskOne of *the* nicest, most wonderful, amazing, perfect Mac apps I use fifty+ times a day. Worth every penny.”"
+        style="--review-role-family: var(--ft-action-family); --review-role-size: var(--text-small);" />
+      <Card variant="review" author="Jillian Benbow" byline="Senior Community Manager" image={jillianBenbowMac}
+        text="I'm so happy using the best screenshot/video recording app ever – Webuir. Great job guys. ✨" />
+      <Card variant="review" author="Enters JK" byline="Software Eng. at Bom" image={entersJK}
+        text="“I love Fintask! Use it daily too.”" />
+      <Card variant="review" author="Benbow" byline="Senior Manager" image={benbow}
+        text="“Have you used Fintask before? When you take a screenshot, it pops up and let's you save it or copy it. Probably one of my favorite pieces of Mac software”"
+        style="--review-role-family: var(--ft-action-family); --review-role-size: var(--text-small);" />
+      <Card variant="review" author="Jillian Benbow" byline="Senior Community Manager" image={jillianBenbowTeam}
+        text="Fintask does anything and everything I need. 👌" />
+      <Button slot="action" variant="pill" emphasis="secondary" data-expanded-label="See less"
+        style="--button-2-background: var(--ft-paper); --button-2-text: var(--ft-violet-edge); --button-2-border: var(--ft-violet-edge); --ft-action-stroke: var(--ft-outline-stroke); --ft-action-shadow: var(--ft-outline-shadow);">
+        See more
+      </Button>
+    </Grid>
+  </Section>
+  <!-- Support -->
+  <Section
+    id="contact"
+    aria-labelledby="contact-title"
+    align="center"
+    paddingTop="none"
+    paddingBottom="medium"
+    style="padding-top: var(--space-6); scroll-margin-top: var(--nav-height);"
+  >
+    <ContentWrapper centered>
+      <Grid class="align-items-end justify-content-center gap-0" style="grid-template-columns: 3rem 1.75rem 3rem;" aria-hidden="true">
+        <Img src={supportLeft} variant="densities" width={48} transparent class="radius-round" style={portraitOutline} />
+        <Img src={supportCenter} variant="densities" width={56} transparent class="radius-round" style={`${portraitOutline} max-width: none; justify-self: center; z-index: 1;`} />
+        <Img src={supportRight} variant="densities" width={48} transparent class="radius-round" style={portraitOutline} />
+      </Grid>
+      <Heading tag="h2" variant="h4" id="contact-title" class="margin-top-5"
+        style="--h4-font-family: var(--ft-body-family); --h4-font-weight: var(--primary-medium); --h4-line-height: 1.3125; --h4-margin-bottom: 1.25rem; text-box: normal;">
+        Still have questions?
+      </Heading>
+      <Paragraph variant="main" style="max-width: 35.3125rem; text-box: normal; color: var(--ft-muted);">
+        If you can’t find the answer to your question in our FAQ, you can always contact us. We’ll get back to you shortly.
+      </Paragraph>
+      <Form
+        name="fintask-subscribe"
+        variant="inline"
+        aria-label="Email subscription"
+        action={subscriptionEndpoint}
+        successMessage="Thanks for subscribing!"
+        errorMessage="We couldn’t complete your subscription. Please try again."
+        class="margin-top-6"
+      >
+        <Input variant="email" name="email" label="Email address" placeholder="email address" labelHidden required disabled={!subscriptionEndpoint} />
+        <Button type="submit" disabled={!subscriptionEndpoint}>Subscribe</Button>
+      </Form>
+      {!subscriptionEndpoint && <Paragraph variant="small" class="margin-top-2" style="color: var(--ft-muted);">Subscriptions are currently unavailable.</Paragraph>}
+    </ContentWrapper>
+  </Section>
+  <!-- Free trial -->
+  <Section
+    id="free-trial"
+    aria-labelledby="free-trial-title"
+    align="center"
+    paddingTop="small"
+    paddingBottom="medium"
+    style={`
+      --background: var(--ft-cream);
+      background-image: url("${trialTopLeft.src}"), url("${trialBottomRight.src}");
+      background-position: left top, right bottom;
+      background-size: 18.75% auto, 31.9444% auto;
+      background-repeat: no-repeat;
+      padding-bottom: calc(var(--section-space-medium) + .25rem);
+      scroll-margin-top: var(--nav-height);
+    `}
+  >
+    <ContentWrapper centered style="--text-small-font-weight: var(--primary-medium); --text-small-line-height: 1.75;">
+      <Heading tag="h2" id="free-trial-title" style="--h2-line-height: 1.232; text-box: normal;">
+        Get more<br /> productive team
+      </Heading>
+      <ButtonWrapper style="margin-block: calc(var(--space-6) + .25rem) calc(var(--space-5) - .25rem);">
+        <Button
+          variant="pill"
+          {...(signupUrl ? { element: "link" as const, href: signupUrl } : { disabled: true, title: "Trial signup is currently unavailable." })}
+          style="--ft-action-stroke: var(--ft-outline-stroke); --ft-action-shadow: .375rem .375rem 0 var(--ft-violet-edge);"
+        >Start Now - Free</Button>
+      </ButtonWrapper>
+      <Grid
+        medium={3}
+        role="list"
+        aria-label="Free trial details"
+        class="grid-tracks-content justify-content-center gap-4 gap-row-2"
+      >
+        {trialDetails.map(detail => (
+          <Paragraph role="listitem" variant="small" class="flex-horizontal-nowrap align-items-center gap-2 margin-top-0">
+            <Img src={trialCheck} variant="densities" width={32} transparent />
+            {detail}
+          </Paragraph>
+        ))}
+      </Grid>
     </ContentWrapper>
   </Section>
 </Layout>

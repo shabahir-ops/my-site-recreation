@@ -545,6 +545,12 @@
   -webkit-line-clamp: 4;
 }
 
+/* Grid tracks */
+.grid-tracks-content {
+  grid-template-columns: repeat(var(--_cols), minmax(0, max-content));
+  justify-items: center;
+}
+
 /* Gap */
 .gap-inherit {
   grid-column-gap: inherit;

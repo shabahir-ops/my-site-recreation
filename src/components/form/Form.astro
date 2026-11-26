@@ -13,6 +13,8 @@ interface Props extends HTMLAttributes<"form"> {
   successMessage?: string;
   /** Message shown after an error. */
   errorMessage?: string;
+  /** Field and submit button layout. */
+  variant?: "stack" | "inline";
 }
 
 const {
@@ -21,6 +23,7 @@ const {
   action,
   successMessage = "Thanks — we will be in touch.",
   errorMessage = "That did not send. Please try again.",
+  variant = "stack",
   method = "post",
   class: className,
   ...rest
@@ -31,7 +34,7 @@ const content = await slotContent(Astro.slots);
 
 {render && name && content && (
   <div
-    class:list={["form_wrap", className]}
+    class:list={["form_wrap", variant !== "stack" && variant, className]}
     data-state="idle"
     data-endpoint={action}
   >
@@ -69,6 +72,7 @@ const content = await slotContent(Astro.slots);
       if (!fields.checkValidity()) return;
 
       event.preventDefault();
+      if (submit?.disabled) return;
       form.dataset.state = "sending";
       if (submit) submit.disabled = true;
 
@@ -113,6 +117,33 @@ const content = await slotContent(Astro.slots);
       padding: var(--space-4) var(--space-5);
       border: var(--border-width) solid var(--border);
       border-radius: var(--radius-small);
+    }
+
+    .form_wrap.inline {
+      max-width: 22rem;
+      & > form {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: stretch;
+        gap: 0;
+      }
+      & input {
+        min-width: 0;
+        min-height: 3.375rem;
+        padding: .625rem 1rem;
+        border: .125rem solid color-mix(in srgb, var(--text) 4%, transparent);
+        border-radius: var(--ft-card-radius, var(--radius-small)) 0 0 var(--ft-card-radius, var(--radius-small));
+        background: color-mix(in srgb, var(--text) 2%, var(--background));
+        font: 400 1rem/1.875 var(--primary-family);
+        &::placeholder { color: var(--text-2); }
+        &:focus-visible { z-index: 1; border-color: var(--button-border); }
+      }
+      & button {
+        padding: .75rem 1.125rem;
+        border-width: .125rem;
+        border-radius: 0 var(--ft-card-radius, var(--radius-small)) var(--ft-card-radius, var(--radius-small)) 0;
+        font: 700 1rem/1.2 var(--ft-action-family, var(--primary-family));
+      }
     }
 
     .form_wrap[data-state="sent"] {

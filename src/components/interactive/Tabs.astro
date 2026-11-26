@@ -6,8 +6,10 @@ import { slotContent } from "@/utils/slots.ts";
 type Props = HTMLAttributes<"div"> & {
   /** Set to `false` to omit the component. */
   render?: boolean;
+  /** ID of the visible label for the tab list. */
+  labelledBy?: string;
   /** Tab layout. */
-  variant?: "horizontal" | "side";
+  variant?: "horizontal" | "side" | "segmented";
   /** Panel playback. */
   playback?: "manual" | "auto";
   /** Show all panels in design mode. */
@@ -16,6 +18,7 @@ type Props = HTMLAttributes<"div"> & {
 
 const {
   render = true,
+  labelledBy,
   variant = "horizontal",
   playback = "manual",
   preview = false,
@@ -27,6 +30,7 @@ const auto = playback === "auto";
 
 const links = await slotContent(Astro.slots, "links");
 const panels = await slotContent(Astro.slots);
+const note = variant === "segmented" ? await slotContent(Astro.slots, "note") : "";
 ---
 
 {render && links && panels && (
@@ -44,10 +48,12 @@ const panels = await slotContent(Astro.slots);
       <div
         class="tabs_links"
         role="tablist"
+        aria-labelledby={labelledBy}
         aria-orientation={variant === "side" ? "vertical" : "horizontal"}
       >
         <Fragment set:html={links} />
       </div>
+      {note && <span class="tabs_note"><Fragment set:html={note} /></span>}
     </div>
 
     <div class="tabs_panels">
@@ -130,7 +136,7 @@ const panels = await slotContent(Astro.slots);
         bar.scrollBy({ left: box.right - list.right });
     };
 
-    let current = 0;
+    let current = Math.max(0, panels.findIndex(panel => panel.hasAttribute("data-default-panel")));
     let timer: number | undefined;
     let paused = false;
 
@@ -235,7 +241,7 @@ const panels = await slotContent(Astro.slots);
     const wanted = slugs.indexOf(
       new URLSearchParams(location.search).get(key) ?? "",
     );
-    show(wanted === -1 ? 0 : wanted, false, false);
+    show(wanted === -1 ? current : wanted, false, false);
     if (wanted !== -1) tabs.scrollIntoView({ block: "nearest" });
 
     if (!auto) continue;
@@ -298,6 +304,49 @@ const panels = await slotContent(Astro.slots);
       display: flex;
       flex-direction: column;
       min-width: 0;
+    }
+
+    .tabs_wrap.segmented {
+      gap: var(--section-space-small);
+      & > .tabs_bar {
+        justify-self: center;
+        position: relative;
+        max-width: 100%;
+      }
+      & .tabs_links {
+        gap: .75rem;
+        padding: .625rem;
+        border: .125rem solid var(--ft-violet-edge, var(--border));
+        border-radius: var(--radius-round);
+        box-shadow: var(--ft-outline-shadow);
+      }
+      & .tabs_link {
+        min-width: 6.25rem;
+        min-height: 3rem;
+        padding: .5rem 1rem;
+        border: 0;
+        border-radius: var(--radius-round);
+        font: var(--primary-medium) var(--text-main)/1.3 var(--primary-family);
+        color: color-mix(in srgb, var(--text) 64%, var(--background));
+        &.is-active {
+          background: var(--ft-violet, var(--text));
+          color: var(--background);
+        }
+      }
+      & .tabs_note {
+        position: absolute;
+        right: -1.5rem;
+        bottom: calc(100% - .25rem);
+        transform: rotate(19.66deg);
+        padding: .125rem .875rem;
+        border-radius: var(--radius-round);
+        background: color-mix(in srgb, var(--ft-orange) 12%, var(--background));
+        color: var(--ft-orange);
+        font: 700 1.125rem/1.3 var(--ft-note-family, var(--primary-family));
+        pointer-events: none;
+      }
+      & > .tabs_panels { overflow: visible; }
+      & > .tabs_panels > * { transition: none; }
     }
 
     .tabs_links {
@@ -391,8 +440,15 @@ const panels = await slotContent(Astro.slots);
       transition:
         opacity var(--open-duration) var(--open-ease),
         visibility var(--open-duration) var(--open-ease);
-      .tabs_wrap:not(.is-ready) &:first-child,
       &.is-active {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+
+    .tabs_wrap:not(.is-ready) > .tabs_panels {
+      & > [data-default-panel],
+      &:not(:has(> [data-default-panel])) > :first-child {
         opacity: 1;
         visibility: visible;
       }

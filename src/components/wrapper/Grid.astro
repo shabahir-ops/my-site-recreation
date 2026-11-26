@@ -1,6 +1,7 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 import { slotContent } from "@/utils/slots.ts";
+import ButtonWrapper from "@/components/wrapper/ButtonWrapper.astro";
 
 type Base = HTMLAttributes<"div"> & {
   /** Set to `false` to omit the component. */
@@ -11,7 +12,7 @@ type Props = Base &
   (
     | {
         /** Grid mode. */
-        variant?: "columns";
+        variant?: "columns" | "masonry";
         /**
          * Columns below 30rem. Defaults to `1`.
          *
@@ -48,6 +49,15 @@ type Props = Base &
         minColumnWidth?: never;
       }
     | {
+        variant: "stack";
+        xsmall?: never;
+        small?: never;
+        medium?: never;
+        large?: never;
+        maxColumnCount?: never;
+        minColumnWidth?: never;
+      }
+    | {
         variant: "autofit" | "autofill";
         /**
          * Maximum columns. Defaults to `12`.
@@ -69,7 +79,7 @@ type Props = Base &
   );
 
 type AllProps = Base & {
-  variant?: "columns" | "autofit" | "autofill";
+  variant?: "columns" | "autofit" | "autofill" | "stack" | "masonry";
   xsmall?: number;
   small?: number;
   medium?: number;
@@ -92,6 +102,7 @@ const {
 } = Astro.props as AllProps;
 
 const content = await slotContent(Astro.slots);
+const action = variant === "masonry" ? await slotContent(Astro.slots, "action") : "";
 
 const validMinColumnWidth =
   minColumnWidth !== undefined &&
@@ -109,7 +120,7 @@ if (
 }
 
 const columns =
-  (variant !== "columns"
+  (variant !== "columns" && variant !== "masonry"
     ? [
         maxColumnCount !== undefined && `--_max-cols: ${maxColumnCount}`,
         validMinColumnWidth && `--_min-col-width: ${minColumnWidth}`,
@@ -131,9 +142,52 @@ const columns =
     style={columns}
     {...rest}
   >
-    <Fragment set:html={content} />
+    {variant === "masonry" ? (
+      <>
+        <div class="grid_viewport" id={action ? `${rest.id ?? crypto.randomUUID()}-items` : undefined}>
+          <div class="grid_items"><Fragment set:html={content} /></div>
+        </div>
+        {action && <ButtonWrapper marginTop="0" data-grid-action hidden><Fragment set:html={action} /></ButtonWrapper>}
+      </>
+    ) : <Fragment set:html={content} />}
   </div>
 )}
+
+<script>
+  for (const grid of document.querySelectorAll<HTMLElement>(".grid.masonry")) {
+    const viewport = grid.querySelector<HTMLElement>(":scope > .grid_viewport");
+    const action = grid.querySelector<HTMLElement>(":scope > [data-grid-action]");
+    const button = action?.querySelector<HTMLButtonElement>("button[data-expanded-label]");
+    const label = button?.querySelector<HTMLElement>(".button_text");
+    if (!viewport || !action || !button || !label) continue;
+    const collapsedLabel = label.textContent.trim();
+    const expandedLabel = button.dataset.expandedLabel!;
+    button.setAttribute("aria-controls", viewport.id);
+    button.setAttribute("aria-expanded", "false");
+    grid.classList.add("collapsed");
+    action.hidden = false;
+    button.addEventListener("click", () => {
+      const collapsed = grid.classList.toggle("collapsed");
+      button.setAttribute("aria-expanded", String(!collapsed));
+      label.textContent = collapsed ? collapsedLabel : expandedLabel;
+      if (collapsed) button.scrollIntoView({ block: "nearest" });
+    });
+  }
+
+  for (const stack of document.querySelectorAll<HTMLElement>(".grid.stack")) {
+    // Let a tall card scroll fully into view before it sticks.
+    const observer = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        (entry.target as HTMLElement).style.setProperty("--stack-height", `${entry.borderBoxSize[0].blockSize}px`);
+      }
+    });
+    [...stack.children].forEach((child, index) => {
+      if (!(child instanceof HTMLElement)) return;
+      child.style.setProperty("--stack-index", String(index));
+      observer.observe(child);
+    });
+  }
+</script>
 
 <style is:global>
   @layer components {
@@ -157,6 +211,44 @@ const columns =
       }
       @media (width >= 64rem) {
         --_cols: var(--_cols-lg);
+      }
+      &.stack {
+        isolation: isolate;
+        grid-auto-rows: 1fr;
+        & > * {
+          position: sticky;
+          top: min(
+            calc(var(--stack-top, var(--nav-height)) + var(--stack-index, 0) * .625rem),
+            calc(100svh - var(--stack-height, 0rem) - .75rem)
+          );
+        }
+        @media (prefers-reduced-motion: reduce) {
+          & > * { position: relative; top: auto; }
+        }
+      }
+      &.masonry {
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: var(--space-6);
+        overflow-anchor: none;
+        & > [data-grid-action][hidden] { display: none; }
+        & .grid_items {
+          column-count: var(--_cols);
+          column-gap: var(--space-4);
+          & > * {
+            break-inside: avoid;
+            margin-block-end: var(--space-4);
+          }
+        }
+        & .grid_viewport {
+          margin-block-end: calc(-1 * var(--space-4));
+          @media (width >= 64rem) { translate: var(--masonry-offset, 0) 0; }
+        }
+        &.collapsed > .grid_viewport {
+          max-height: 35rem;
+          overflow: clip;
+          mask-image: linear-gradient(to bottom, black 24%, rgb(0 0 0 / 20%) 68%, transparent);
+          @media (width >= 64rem) { max-height: 57rem; }
+        }
       }
       &:is(.autofit, .autofill) {
         --_max-cols: 12;

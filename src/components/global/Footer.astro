@@ -3,15 +3,63 @@ import Icon from "@/components/media/Icon.astro";
 import logo from "@/assets/logo/logo.svg";
 import { SITE_NAME } from "@/consts.ts";
 
+import mark from "@/assets/logo/fintask-mark.svg";
+import linkedin from "@/assets/icons/footer-linkedin.svg";
+import facebook from "@/assets/icons/footer-facebook.svg";
+import twitter from "@/assets/icons/footer-twitter.svg";
+import Form from "@/components/form/Form.astro";
+import Input from "@/components/form/Input.astro";
+import Button from "@/components/Button.astro";
+
+const social = [{ label: "LinkedIn", icon: linkedin }, { label: "Facebook", icon: facebook }, { label: "Twitter", icon: twitter }];
+const explore = ["Pricing", "Integration", "Download", "Blog"];
+const legal = ["Cookies", "Privacy policy", "Security", "Legal documents"];
 interface Props {
+  /** Display the Fintask landing page footer. */
+  variant?: "default" | "fintask";
+  /** URLs for the navigation, social profiles and legal pages, keyed by label. */
+  destinations?: Record<string, string>;
   /** Set to `false` to omit the component. */
   render?: boolean;
 }
 
-const { render = true } = Astro.props;
+const { render = true, variant = "default", destinations = {} } = Astro.props;
+const links: Record<string, string> = { Pricing: "/#pricing", Integration: "/#integrations", ...destinations };
+const endpoint = import.meta.env.PUBLIC_FINTASK_SUBSCRIBE_URL?.trim();
 ---
 
-{render && (
+{render && variant === "fintask" && (
+  <footer class="ft-footer">
+    <div class="ft-footer_main">
+      <div>
+        <a class="ft-footer_brand" href="/" aria-label="Fintask home"><img src={mark.src} width="64" height="64" alt="" />Fintask</a>
+        <p>Stay organized and productive with Fintask.io</p>
+      </div>
+      <nav aria-label="Explore">
+        <h2>Explore</h2>
+        <ul>{explore.map(label => <li><a href={links[label]} aria-disabled={!links[label] || undefined}>{label}</a></li>)}
+          <li class="ft-footer_soon">Features <small>Soon!</small></li>
+        </ul>
+      </nav>
+      <div>
+        <h2>Keep in touch</h2>
+        <Form name="footer-subscribe" action={endpoint} variant="inline" aria-label="Footer email subscription" successMessage="Thanks for subscribing!">
+          <Input name="email" label="Email address" variant="email" placeholder="email address" labelHidden required disabled={!endpoint} />
+          <Button type="submit" disabled={!endpoint}>Subscribe</Button>
+        </Form>
+        {!endpoint && <small>Subscriptions are currently unavailable.</small>}
+        <h2 class="ft-footer_follow">Follow us</h2>
+        <ul class="ft-footer_social">{social.map(({ label, icon }) => <li><a href={links[label]} aria-disabled={!links[label] || undefined} aria-label={label}><img src={icon.src} alt={label} width="24" height="24" /></a></li>)}</ul>
+      </div>
+    </div>
+    <div class="ft-footer_legal">
+      <div><p>Copyright © Sabai 2026·All Rights Reserved</p>
+        <nav aria-label="Legal"><ul>{legal.map(label => <li><a href={links[label]} aria-disabled={!links[label] || undefined}>{label}</a></li>)}</ul></nav>
+      </div>
+    </div>
+  </footer>
+)}
+{render && variant === "default" && (
   <footer class="footer_wrap">
     <div class="footer_inner">
       <div class="footer_top">
@@ -53,6 +101,57 @@ const { render = true } = Astro.props;
 
 <style is:global>
   @layer components {
+    .ft-footer {
+      background: var(--ft-paper);
+      color: var(--ft-ink);
+      font: 400 var(--text-large)/1.5 var(--ft-body-family);
+      & ul { list-style: none; padding: 0; margin: 0; }
+      & a { color: inherit; text-decoration: none; }
+      & a[href]:not(.ft-footer_brand):hover { text-decoration: underline; }
+      & h2 { margin: 0 0 var(--space-6); font: 500 clamp(1.25rem,1.875cqi,1.5rem)/1.25 var(--ft-body-family); }
+      & :is(h2,p) { text-box: normal; }
+      & .ft-footer_main, & .ft-footer_legal > div {
+        width: min(calc(100% - 2 * var(--site-margin)), var(--ft-content-width));
+        margin-inline: auto;
+        container-type: inline-size;
+      }
+      & .ft-footer_main {
+        display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr) minmax(0,1.6fr);
+        padding-block: 4.75rem 4rem;
+      }
+      & .ft-footer_main > :not(:first-child) { padding-top: .8125rem; }
+      & .ft-footer_main > * { font-size: clamp(1rem,1.5625cqi,1.25rem); }
+      & .ft-footer_brand {
+        display: inline-flex; align-items: center; gap: .25em;
+        font: 700 clamp(2rem,3.75cqi,3rem)/1 var(--ft-heading-family);
+      }
+      & .ft-footer_brand img { width: 1.333333em; height: 1.333333em; }
+      & .ft-footer_brand + p { margin-top: var(--space-4); }
+      & .ft-footer_main nav li { line-height: 2.4; }
+      & .ft-footer_soon { color: var(--ft-muted); }
+      & .ft-footer_soon small { margin-left: .75rem; background: color-mix(in srgb,var(--ft-orange) 12%,transparent); color: var(--ft-orange); padding: .25rem .75rem; border-radius: var(--radius-round); font-size: .875rem; }
+      & .form_wrap.inline { max-width: 24.125rem; }
+      & .form_wrap.inline input { min-height: clamp(3rem,4.84375cqi,3.875rem); font-size: clamp(1rem,1.5625cqi,1.25rem); }
+      & .form_wrap.inline button { padding-inline: clamp(.75rem,2.25vw,2rem); font-size: clamp(1rem,1.40625cqi,1.125rem); }
+      & .form_wrap + small { font-size: .875rem; color: var(--ft-muted); }
+      & .ft-footer_follow { margin-block: var(--space-6) 1.25rem; }
+      & .ft-footer_social, & .ft-footer_legal ul { display: flex; flex-wrap: wrap; gap: 1rem; }
+      & .ft-footer_social a { width: 3rem; height: 3rem; display: grid; place-items: center; border: 1px solid var(--ft-rule); border-radius: 50%; }
+      & .ft-footer_social img { width: 1.5rem; height: 1.5rem; object-fit: contain; }
+      & .ft-footer_legal { border-top: 1px solid var(--ft-rule); font: 400 1rem/1.5 var(--ft-action-family); }
+      & .ft-footer_legal > div { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4); padding-block: var(--space-6); }
+      & .ft-footer_legal p { font-size: clamp(.875rem,1.25cqi,1rem); }
+      & .ft-footer_legal ul { gap: var(--space-3) var(--space-7); font-size: clamp(1rem,1.40625cqi,1.125rem); }
+      @media (width < 64rem) {
+        & .ft-footer_main { grid-template-columns: 1fr 1.5fr; gap: var(--space-6); }
+        & .ft-footer_main > :first-child { grid-column: 1 / -1; }
+      }
+      @media (width < 40rem) {
+        & .ft-footer_main { grid-template-columns: minmax(0,1fr); padding-block: var(--space-7); }
+        & h2 { margin-bottom: var(--space-4); }
+      }
+    }
+
     .footer_wrap {
       display: flex;
       justify-content: center;

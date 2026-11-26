@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "defaultTarget": "all",
+  "githubAccount": "shabahir-ops",
+  "hosting": {
+    "provider": "cloudflare-workers",
+    "accountId": "bc46162fe744507d2260f933dd43bb46",
+    "project": "recreation"
+  },
+  "buildScript": "build",
+  "beforePublish": [],
+  "afterPublish": []
+}

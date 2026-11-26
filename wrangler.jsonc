@@ -1,0 +1,8 @@
+// Cloudflare Workers settings Stacki wrote when this site was added as a Worker. Edit freely.
+{
+  "name": "recreation",
+  "compatibility_date": "2026-11-26",
+  "assets": {
+    "directory": "./dist"
+  }
+}
