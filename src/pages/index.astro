@@ -82,22 +82,26 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
       column2Class="fintask-calendar margin-inline-auto"
       style="padding-top: .375rem; row-gap: clamp(3rem, 5.3vw, 4.75rem); --h1-margin-bottom: var(--space-5); --text-large-line-height: 1.3; --text-large-font-weight: var(--primary-medium);"
     >
-      <Heading tag="h1" id="hero-title">
+      <Heading tag="h1" id="hero-title" aria-label="Manage Your Team’s Productivity">
         <span class="fintask-title-line" data-reveal-at="0">
-          Manage Your
-          <span class="fintask-title-team"><Img src={team} variant="densities" width={118} transparent loading="eager" /></span>
-          Team’s
+          <span data-split-text>Manage Your</span>
+          <button type="button" class="fintask-title-team" data-click="bounce" data-shadow-lift aria-label="Bounce the team illustration" disabled>
+            <Img src={team} variant="densities" width={118} transparent loading="eager" />
+          </button>
+          <span data-split-text>Team’s</span>
         </span>
         <span class="fintask-title-line" data-reveal-at="0.08">
-          <span class="fintask-title-task"><Img src={task} variant="densities" width={290} transparent loading="eager" /></span>
-          <span style="color: var(--ft-orange)">Productivity</span>
+          <button type="button" class="fintask-title-task" data-click="bounce" data-shadow-lift aria-label="Bounce the task illustration" disabled>
+            <Img src={task} variant="densities" width={290} transparent loading="eager" />
+          </button>
+          <span data-split-text style="color: var(--ft-orange)">Productivity</span>
         </span>
       </Heading>
-      <Paragraph data-reveal-at="0.16" variant="large" style="max-width: min(100%, 31.1875rem); text-box: normal; color: color-mix(in srgb, currentColor 72%, transparent);">
+      <Paragraph data-split-text data-reveal-at="0.16" variant="large" style="max-width: min(100%, 31.1875rem); text-box: normal; color: color-mix(in srgb, currentColor 72%, transparent);">
         Plan projects, stay on track, and deliver on time without overworking your team.
       </Paragraph>
       <ButtonWrapper data-reveal-at="0.24" marginTop="7">
-        <Button variant="pill" disabled>Try Now - Free!</Button>
+        <Button data-shadow-lift="cta" variant="pill" disabled>Try Now - Free!</Button>
       </ButtonWrapper>
       <Paragraph
         data-reveal-at="0.32"
@@ -130,7 +134,7 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
     </ContentWrapper>
   </Section>
   <!-- Integrations -->
-  <Section
+  <Section data-animate="scroll"
     id="integrations"
     aria-labelledby="integrations-title"
     paddingTop="none"
@@ -139,7 +143,7 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
     style="padding-top: calc(var(--space-7) + .125rem); scroll-margin-top: 9rem;"
   >
     <ContentWrapper centered>
-      <Heading
+      <Heading data-split-text
         tag="h2"
         variant="inherit"
         id="integrations-title"
@@ -160,7 +164,7 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
     </ContentWrapper>
   </Section>
   <!-- Features -->
-  <Section
+  <Section data-animate="scroll"
     id="features"
     aria-labelledby="features-title"
     paddingTop="small"
@@ -172,11 +176,11 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
   >
     <ContentWrapper centered>
       <Eyebrow variant="annotation" style="--feature-label: #cbcbcb;">Features</Eyebrow>
-      <Heading tag="h2" id="features-title" class="margin-top-2" style="text-box: normal;">
+      <Heading data-split-text tag="h2" id="features-title" class="margin-top-2" style="text-box: normal;">
         The features<br />Both familiar and new.
       </Heading>
     </ContentWrapper>
-    <Grid medium={2} large={3} class="gap-small gap-row-7">
+    <Grid data-feature-lift medium={2} large={3} class="gap-small gap-row-7">
       <Card
         variant="feature"
         heading="Task Prograss"
@@ -204,7 +208,7 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
     </Grid>
   </Section>
   <!-- Advantages -->
-  <Section
+  <Section data-animate="scroll"
     id="advantages"
     aria-labelledby="advantages-title"
     align="center"
@@ -216,14 +220,14 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
   >
     <ContentWrapper centered>
       <Eyebrow variant="annotation" style="--annotation-accent: var(--ft-violet); --feature-label: #bcbcbc;">Advantages</Eyebrow>
-      <Heading tag="h2" id="advantages-title" class="margin-top-2" style="max-width: 18ch; text-box: normal; --h2-margin-bottom: var(--space-4);">
+      <Heading data-split-text tag="h2" id="advantages-title" class="margin-top-2" style="max-width: 18ch; text-box: normal; --h2-margin-bottom: var(--space-4);">
         A task manager you can trust for teams
       </Heading>
-      <Paragraph variant="large" style="text-box: normal;">
+      <Paragraph data-split-text variant="large" style="text-box: normal;">
         Plan projects, stay on track, and deliver on time without overworking your team.
       </Paragraph>
       <ButtonWrapper marginTop="5">
-        <Button element="link" variant="pill" href="#advantage-workflow">Get Start</Button>
+        <Button data-shadow-lift="cta" element="link" variant="pill" href="#advantage-workflow">Get Start</Button>
       </ButtonWrapper>
     </ContentWrapper>
     <Grid variant="stack" class="gap-small" style="--stack-top: calc(var(--space-6) + 6.25rem); --panel-text: var(--ft-paper);">
@@ -234,8 +238,8 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
         aria-labelledby="workflow-title"
         style="--panel-color: var(--ft-orange); --panel-ratio: 610 / 502; --panel-min-height: 36rem; scroll-margin-top: var(--stack-top);"
       >
-        <Heading tag="h3" variant="h2" id="workflow-title">Simple to use, powerful when need.</Heading>
-        <Paragraph variant="large">Create tasks and projects, upload files, and add comments. With Teamwork everything is in one central location.</Paragraph>
+        <Heading data-split-text tag="h3" variant="h2" id="workflow-title">Simple to use, powerful when need.</Heading>
+        <Paragraph data-split-text variant="large">Create tasks and projects, upload files, and add comments. With Teamwork everything is in one central location.</Paragraph>
         <ul class="advantage-points">
           <li><Img src={workflowIcon} variant="densities" width={40} transparent /><Paragraph tag="span">Costumized your workflow.</Paragraph></li>
           <li><Img src={featuresIcon} variant="densities" width={40} transparent /><Paragraph tag="span">Extra features for complex projects.</Paragraph></li>
@@ -248,8 +252,8 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
         aria-labelledby="projects-title"
         style="--panel-color: var(--ft-forest); --panel-ratio: 644 / 474;"
       >
-        <Heading tag="h3" variant="h2" id="projects-title">Take complex projects with ease</Heading>
-        <Paragraph variant="large">Use status features updates to see how your project is progressing and what’s left to do.</Paragraph>
+        <Heading data-split-text tag="h3" variant="h2" id="projects-title">Take complex projects with ease</Heading>
+        <Paragraph data-split-text variant="large">Use status features updates to see how your project is progressing and what’s left to do.</Paragraph>
         <ul class="advantage-points">
           <li><Img src={teamIcon} variant="densities" width={40} transparent /><Paragraph tag="span">Keep everyone accountable.</Paragraph></li>
           <li><Img src={statusIcon} variant="densities" width={40} transparent /><Paragraph tag="span">Make sure your status.</Paragraph></li>
@@ -262,17 +266,17 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
         aria-labelledby="apps-title"
         style="--panel-color: var(--ft-violet); --panel-ratio: 618 / 448;"
       >
-        <Heading tag="h3" variant="h2" id="apps-title">Create calm with integrations.</Heading>
-        <Paragraph variant="large" maxWidth={43}>Connect Fintask with all the favorite tools you’ve already use.</Paragraph>
+        <Heading data-split-text tag="h3" variant="h2" id="apps-title">Create calm with integrations.</Heading>
+        <Paragraph data-split-text variant="large" maxWidth={43}>Connect Fintask with all the favorite tools you’ve already use.</Paragraph>
         <ButtonWrapper marginTop="5">
-          <Button element="link" variant="pill" href="#integrations" style="--button-background: var(--ft-orange); --button-border: #ae3011; --ft-action-shadow: .4rem .4rem 0 var(--button-border);">Explore integrations</Button>
+          <Button data-shadow-lift="cta" element="link" variant="pill" href="#integrations" style="--button-background: var(--ft-orange); --button-border: #ae3011; --shadow-depth: .4rem;">Explore integrations</Button>
         </ButtonWrapper>
         <Img slot="column2" src={integrationsPreview} variant="constrained" width={618} sizes="(min-width: 80rem) 39rem, (min-width: 48rem) 48vw, 100vw" transparent alt="Slack, Dropbox, Miro and Notion integration cards" />
       </ContentWrapper>
     </Grid>
   </Section>
   <!-- Pricing -->
-  <Section
+  <Section data-animate="scroll"
     id="pricing"
     aria-labelledby="pricing-title"
     paddingTop="small"
@@ -283,7 +287,7 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
   >
     <ContentWrapper centered>
       <Eyebrow variant="annotation" style="--feature-label: #bcbcbc;">Pricing</Eyebrow>
-      <Heading tag="h2" id="pricing-title" class="margin-top-2" style="max-width: 18ch; text-box: normal; --h2-margin-bottom: 0;">
+      <Heading data-split-text tag="h2" id="pricing-title" class="margin-top-2" style="max-width: 18ch; text-box: normal; --h2-margin-bottom: 0;">
         Choose a plan that fits your team.
       </Heading>
       <Paragraph id="billing-label" variant="large" class="margin-top-5" style="text-box: normal; --text-large-line-height: 1.3; --text-large-font-weight: var(--primary-medium);">
@@ -311,7 +315,7 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
               "Add up to 5 members to your project",
             ]}
           >
-            <Button variant="pill" emphasis="secondary" disabled>Buy now</Button>
+            <Button data-shadow-lift="cta" variant="pill" emphasis="secondary" disabled>Buy now</Button>
           </Card>
           <Card
             variant="plan"
@@ -328,7 +332,7 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
               "Single sign-on (SSO)",
             ]}
           >
-            <Button variant="pill" disabled>Buy now</Button>
+            <Button data-shadow-lift="cta" variant="pill" disabled>Buy now</Button>
           </Card>
           <Card
             variant="plan"
@@ -342,14 +346,14 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
               "Expert training and assistance",
             ]}
           >
-            <Button slot="beforeBenefits" variant="pill" emphasis="secondary" disabled>Contact now</Button>
+            <Button data-shadow-lift="cta" slot="beforeBenefits" variant="pill" emphasis="secondary" disabled>Contact now</Button>
           </Card>
         </Grid>
       ))}
     </Tabs>
   </Section>
   <!-- Reviews -->
-  <Section
+  <Section data-animate="scroll"
     id="reviews"
     aria-labelledby="reviews-title"
     align="center"
@@ -360,9 +364,9 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
   >
     <ContentWrapper centered>
       <Eyebrow variant="annotation" style="--feature-label: #bcbcbc;">Reviews</Eyebrow>
-      <Heading tag="h2" id="reviews-title" class="margin-top-2" style="text-box: normal;">Loved by product people</Heading>
+      <Heading data-split-text tag="h2" id="reviews-title" class="margin-top-2" style="text-box: normal;">Loved by product people</Heading>
     </ContentWrapper>
-    <Grid id="review-list" variant="masonry" medium={2} large={3}>
+    <Grid id="review-list" variant="masonry" data-autoplay medium={2} large={3}>
       <Card variant="review" author="Jillian Benbow" byline="Senior Community Manager" image={jillianBenbow}
         text="“Fintask The best!”" />
       <Card variant="review" author="Pilliaf Tom" byline="Senior Manager" image={pilliafTom}
@@ -386,14 +390,14 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
         style="--review-role-family: var(--ft-action-family); --review-role-size: var(--text-small);" />
       <Card variant="review" author="Jillian Benbow" byline="Senior Community Manager" image={jillianBenbowTeam}
         text="Fintask does anything and everything I need. 👌" />
-      <Button slot="action" variant="pill" emphasis="secondary" data-expanded-label="See less"
-        style="--button-2-background: var(--ft-paper); --button-2-text: var(--ft-violet-edge); --button-2-border: var(--ft-violet-edge); --ft-action-stroke: var(--ft-outline-stroke); --ft-action-shadow: var(--ft-outline-shadow);">
+      <Button data-shadow-lift="cta" slot="action" variant="pill" emphasis="secondary" data-expanded-label="See less"
+        style="--button-2-background: var(--ft-paper); --button-2-text: var(--ft-violet-edge); --button-2-border: var(--ft-violet-edge); --ft-action-stroke: var(--ft-outline-stroke);">
         See more
       </Button>
     </Grid>
   </Section>
   <!-- Support -->
-  <Section
+  <Section data-animate="scroll"
     id="contact"
     aria-labelledby="contact-title"
     align="center"
@@ -407,11 +411,11 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
         <Img src={supportCenter} variant="densities" width={56} transparent class="radius-round" style={`${portraitOutline} max-width: none; justify-self: center; z-index: 1;`} />
         <Img src={supportRight} variant="densities" width={48} transparent class="radius-round" style={portraitOutline} />
       </Grid>
-      <Heading tag="h2" variant="h4" id="contact-title" class="margin-top-5"
+      <Heading data-split-text tag="h2" variant="h4" id="contact-title" class="margin-top-5"
         style="--h4-font-family: var(--ft-body-family); --h4-font-weight: var(--primary-medium); --h4-line-height: 1.3125; --h4-margin-bottom: 1.25rem; text-box: normal;">
         Still have questions?
       </Heading>
-      <Paragraph variant="main" style="max-width: 35.3125rem; text-box: normal; color: var(--ft-muted);">
+      <Paragraph data-split-text variant="main" style="max-width: 35.3125rem; text-box: normal; color: var(--ft-muted);">
         If you can’t find the answer to your question in our FAQ, you can always contact us. We’ll get back to you shortly.
       </Paragraph>
       <Form
@@ -424,13 +428,13 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
         class="margin-top-6"
       >
         <Input variant="email" name="email" label="Email address" placeholder="email address" labelHidden required disabled={!subscriptionEndpoint} />
-        <Button type="submit" disabled={!subscriptionEndpoint}>Subscribe</Button>
+        <Button data-shadow-lift="cta" type="submit" disabled={!subscriptionEndpoint}>Subscribe</Button>
       </Form>
       {!subscriptionEndpoint && <Paragraph variant="small" class="margin-top-2" style="color: var(--ft-muted);">Subscriptions are currently unavailable.</Paragraph>}
     </ContentWrapper>
   </Section>
   <!-- Free trial -->
-  <Section
+  <Section data-animate="scroll"
     id="free-trial"
     aria-labelledby="free-trial-title"
     align="center"
@@ -447,14 +451,14 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
     `}
   >
     <ContentWrapper centered style="--text-small-font-weight: var(--primary-medium); --text-small-line-height: 1.75;">
-      <Heading tag="h2" id="free-trial-title" style="--h2-line-height: 1.232; text-box: normal;">
+      <Heading data-split-text tag="h2" id="free-trial-title" style="--h2-line-height: 1.232; text-box: normal;">
         Get more<br /> productive team
       </Heading>
       <ButtonWrapper style="margin-block: calc(var(--space-6) + .25rem) calc(var(--space-5) - .25rem);">
-        <Button
+        <Button data-shadow-lift="cta"
           variant="pill"
           {...(signupUrl ? { element: "link" as const, href: signupUrl } : { disabled: true, title: "Trial signup is currently unavailable." })}
-          style="--ft-action-stroke: var(--ft-outline-stroke); --ft-action-shadow: .375rem .375rem 0 var(--ft-violet-edge);"
+          style="--ft-action-stroke: var(--ft-outline-stroke); --shadow-depth: .375rem;"
         >Start Now - Free</Button>
       </ButtonWrapper>
       <Grid
@@ -477,7 +481,96 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
 <script>
   import { gsap } from "gsap";
 
+  import { SplitText } from "gsap/SplitText";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(SplitText, ScrollTrigger);
+
+  function revealWords(element: HTMLElement, timeline: gsap.core.Timeline, start = 0) {
+    const split = SplitText.create(element, { type: "words", tag: "span" });
+    timeline.from(split.words, {
+      opacity: 0, yPercent: 30, duration: 0.45, ease: "power2.out",
+      stagger: { amount: Math.min(0.28, split.words.length * 0.035) },
+      onComplete: () => split.revert(),
+    }, start);
+    return split;
+  }
+
+  gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
+    for (const card of document.querySelectorAll("[data-feature-lift] > .card_wrap.feature")) {
+      gsap.fromTo(card, { "--feature-lift": 0 }, {
+        "--feature-lift": 1,
+        ease: "none",
+        scrollTrigger: { trigger: card, start: "top 94%", end: "top 48%", scrub: 0.25 },
+      });
+    }
+    for (const section of document.querySelectorAll('[data-animate="scroll"]')) {
+      gsap.from(section, {
+        opacity: 0.35, duration: 0.55, ease: "power2.out", clearProps: "opacity",
+        scrollTrigger: { trigger: section, start: "top 95%", once: true },
+      });
+      for (const text of section.querySelectorAll<HTMLElement>("[data-split-text]")) {
+        const timeline = gsap.timeline({
+          scrollTrigger: { trigger: text, start: "top 96%", once: true },
+        });
+        revealWords(text, timeline);
+      }
+    }
+  });
+
+  const liftIn = { "--lift-load": 1, duration: 0.5, ease: "back.out(2.6)" };
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", (context) => {
+    const listeners = new AbortController();
+    const reveal = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        reveal.unobserve(entry.target);
+        context.add(() => gsap.to(entry.target, { ...liftIn }));
+      }
+    });
+    // Observe each CTA so controls in hidden pricing tabs lift on their first appearance.
+    for (const cta of document.querySelectorAll('[data-shadow-lift="cta"]')) {
+      if (cta.closest('[data-animate="onload"]')) continue;
+      gsap.set(cta, { "--lift-load": 0 });
+      reveal.observe(cta);
+    }
+    const options = { signal: listeners.signal };
+    const controls = document.querySelectorAll<HTMLButtonElement>('[data-click="bounce"]');
+
+    for (const control of controls) {
+      const artwork = control.querySelector("img");
+      if (!artwork) continue;
+      const bounce = gsap.timeline({ paused: true })
+        .to(artwork, { "--bounce-x": 1.1, "--bounce-y": 0.86, duration: 0.05 })
+        .to(artwork, { "--bounce-rise": "-16px", "--bounce-x": 0.95, "--bounce-y": 1.1, duration: 0.09, ease: "power2.out" })
+        .to(artwork, { "--bounce-rise": "0px", "--bounce-x": 1.07, "--bounce-y": 0.9, duration: 0.08, ease: "power2.in" })
+        .to(artwork, { "--bounce-rise": "-6px", "--bounce-x": 0.98, "--bounce-y": 1.04, duration: 0.07, ease: "power2.out" })
+        .to(artwork, { "--bounce-rise": "0px", "--bounce-x": 1, "--bounce-y": 1, duration: 0.11, ease: "sine.inOut" });
+      control.disabled = false;
+      control.addEventListener("click", () => bounce.restart(), options);
+    }
+
+    for (const button of document.querySelectorAll<HTMLElement>("[data-shadow-lift]")) {
+      const hover = gsap.fromTo(button, { "--lift-hover": 0 }, {
+        "--lift-hover": 0.7, paused: true, duration: 0.24, ease: "back.out(2.6)",
+      });
+      const update = () => {
+        const hovered = window.matchMedia("(hover: hover)").matches && button.matches(":hover");
+        hover.reversed(!(hovered || button.matches(":focus-visible"))).paused(false);
+      };
+      for (const event of ["pointerenter", "pointerleave", "focus", "blur"]) {
+        button.addEventListener(event, update, options);
+      }
+    }
+
+    return () => {
+      reveal.disconnect();
+      listeners.abort();
+      for (const control of controls) control.disabled = true;
+    };
+  });
 
   if (!reducedMotion.matches) {
     for (const section of document.querySelectorAll('[data-animate="onload"]')) {
@@ -487,14 +580,24 @@ const portraitOutline = "outline: .146rem solid var(--ft-paper); outline-offset:
         onComplete: finish,
       });
 
+      const splits: SplitText[] = [];
+
       function finish() {
         reducedMotion.removeEventListener("change", finish);
         entrance.revert();
+        splits.forEach(split => split.revert());
       }
 
       for (const item of section.querySelectorAll<HTMLElement>("[data-reveal-at]")) {
-        const start = Number(item.dataset.revealAt);
-        entrance.from(item, { opacity: 0, y: 16 }, Number.isFinite(start) ? Math.max(0, start) : 0);
+        const delay = Number(item.dataset.revealAt);
+        const start = Number.isFinite(delay) ? Math.max(0, delay) : 0;
+        entrance.from(item, { opacity: 0, y: 16 }, start);
+        const texts = item.matches("[data-split-text]") ? [item] : item.querySelectorAll<HTMLElement>("[data-split-text]");
+        for (const text of texts) splits.push(revealWords(text, entrance, start));
+        const faces = item.querySelectorAll("[data-shadow-lift]");
+        if (faces.length) {
+          entrance.fromTo(faces, { "--lift-load": 0 }, { ...liftIn }, start);
+        }
       }
 
       reducedMotion.addEventListener("change", finish);

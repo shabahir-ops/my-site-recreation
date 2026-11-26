@@ -29,26 +29,26 @@ const endpoint = import.meta.env.PUBLIC_FINTASK_SUBSCRIBE_URL?.trim();
 ---
 
 {render && variant === "fintask" && (
-  <footer class="ft-footer">
+  <footer class="ft-footer" data-animate="scroll">
     <div class="ft-footer_main">
       <div>
         <a class="ft-footer_brand" href="/" aria-label="Fintask home"><img src={mark.src} width="64" height="64" alt="" />Fintask</a>
         <p>Stay organized and productive with Fintask.io</p>
       </div>
       <nav aria-label="Explore">
-        <h2>Explore</h2>
+        <h2 data-split-text>Explore</h2>
         <ul>{explore.map(label => <li><a href={links[label]} aria-disabled={!links[label] || undefined}>{label}</a></li>)}
           <li class="ft-footer_soon">Features <small>Soon!</small></li>
         </ul>
       </nav>
       <div>
-        <h2>Keep in touch</h2>
+        <h2 data-split-text>Keep in touch</h2>
         <Form name="footer-subscribe" action={endpoint} variant="inline" aria-label="Footer email subscription" successMessage="Thanks for subscribing!">
           <Input name="email" label="Email address" variant="email" placeholder="email address" labelHidden required disabled={!endpoint} />
-          <Button type="submit" disabled={!endpoint}>Subscribe</Button>
+          <Button data-shadow-lift="cta" type="submit" disabled={!endpoint}>Subscribe</Button>
         </Form>
         {!endpoint && <small>Subscriptions are currently unavailable.</small>}
-        <h2 class="ft-footer_follow">Follow us</h2>
+        <h2 class="ft-footer_follow" data-split-text>Follow us</h2>
         <ul class="ft-footer_social">{social.map(({ label, icon }) => <li><a href={links[label]} aria-disabled={!links[label] || undefined} aria-label={label}><img src={icon.src} alt={label} width="24" height="24" /></a></li>)}</ul>
       </div>
     </div>

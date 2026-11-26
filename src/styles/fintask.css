@@ -129,8 +129,43 @@
     line-height: var(--h1-line-height);
 
     & + & { margin-top: .05em; }
-    & .fintask-title-team { width: 1.64em; }
-    & .fintask-title-task { width: 4.02em; }
+    & [data-shadow-lift] {
+      position: relative;
+      &::before {
+        content: "";
+        position: absolute;
+        opacity: clamp(0, var(--lift), 1);
+        pointer-events: none;
+      }
+      & img {
+        position: absolute;
+        top: 0;
+        --bounce-x: 1;
+        --bounce-y: 1;
+        --bounce-rise: 0px;
+        transform: translateY(var(--bounce-rise)) scale(var(--bounce-x), var(--bounce-y));
+        translate: calc((1 - var(--lift)) * var(--flush-x)) calc((1 - var(--lift)) * var(--flush-y));
+        rotate: calc((1 - var(--lift)) * var(--flush-angle));
+      }
+    }
+    & .fintask-title-team {
+      width: 1.64em;
+      aspect-ratio: 118.2 / 67.12;
+      --flush-x: -11%;
+      --flush-y: 17%;
+      --flush-angle: -8deg;
+      &::before { inset: auto auto 0 0; width: 83.75%; height: 67%; border-radius: var(--radius-round); background: color-mix(in srgb, var(--ft-ink) 20%, transparent); }
+      & img { right: 0; width: 94.93%; }
+    }
+    & .fintask-title-task {
+      width: 4.02em;
+      aspect-ratio: 289.88 / 101.83;
+      --flush-x: -0.7%;
+      --flush-y: 15.5%;
+      --flush-angle: -4deg;
+      &::before { inset: auto auto 0 4.96%; width: 88.66%; height: 71.69%; border-radius: .055em; background: var(--ft-ink); }
+      & img { left: 0; width: 100%; }
+    }
     @media (width < 48rem) {
       flex-wrap: wrap;
       gap: 0 .15em;
@@ -140,6 +175,26 @@
     @media (width < 30rem) {
       & .fintask-title-team { width: 1.2em; }
       & .fintask-title-task { display: none; }
+    }
+  }
+  [data-shadow-lift] {
+    --lift: calc(var(--lift-load, 1) * (1 + var(--lift-hover, 0)));
+  }
+  .fintask .form_wrap { --shadow-depth: .25rem; }
+  .fintask :is(.button_wrap, .nav_join)[data-shadow-lift="cta"] {
+    --depth: var(--shadow-depth, .4375rem);
+    --offset: calc(var(--lift) * var(--depth));
+    box-shadow: var(--offset) var(--offset) 0 var(--button-border);
+    translate: calc(var(--depth) - var(--offset)) calc(var(--depth) - var(--offset));
+    scale: calc(1 + var(--lift-hover, 0) * .08);
+    &.nav_join {
+      --shadow-depth: .25rem;
+      --button-border: var(--ft-ink);
+    }
+    &.secondary { --shadow-depth: .25rem; }
+    &:focus-visible { background-color: var(--ft-ink); color: var(--ft-paper); }
+    @media (hover: hover) {
+      &:hover { background-color: var(--ft-ink); color: var(--ft-paper); }
     }
   }
   .layout > .fintask-calendar {

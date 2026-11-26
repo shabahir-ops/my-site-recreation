@@ -162,6 +162,14 @@ const columns =
     if (!viewport || !action || !button || !label) continue;
     const collapsedLabel = label.textContent.trim();
     const expandedLabel = button.dataset.expandedLabel!;
+    if (grid.hasAttribute("data-autoplay")) {
+      const items = viewport.querySelector<HTMLElement>(".grid_items")!;
+      const copy = items.cloneNode(true) as HTMLElement;
+      copy.inert = true;
+      copy.setAttribute("aria-hidden", "true");
+      for (const el of copy.querySelectorAll("[id]")) el.removeAttribute("id");
+      viewport.append(copy);
+    }
     button.setAttribute("aria-controls", viewport.id);
     button.setAttribute("aria-expanded", "false");
     grid.classList.add("collapsed");
@@ -249,6 +257,30 @@ const columns =
           mask-image: linear-gradient(to bottom, black 24%, rgb(0 0 0 / 20%) 68%, transparent);
           @media (width >= 64rem) { max-height: 57rem; }
         }
+        &[data-autoplay] {
+          & .grid_items[inert] { display: none; }
+          &.collapsed > .grid_viewport {
+            mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+            @media (prefers-reduced-motion: no-preference) {
+              display: grid;
+              grid-template: max-content / minmax(0, 1fr);
+              & > .grid_items {
+                grid-area: 1 / 1;
+                animation: masonry-loop 90s linear infinite;
+                @media (width >= 48rem) { animation-duration: 52s; }
+                @media (width >= 64rem) { animation-duration: 38s; }
+              }
+              & > .grid_items[inert] {
+                display: block;
+                transform: translateY(100%);
+              }
+              &:focus-within > .grid_items { animation-play-state: paused; }
+              @media (hover: hover) {
+                &:hover > .grid_items { animation-play-state: paused; }
+              }
+            }
+          }
+        }
       }
       &:is(.autofit, .autofill) {
         --_max-cols: 12;
@@ -267,6 +299,9 @@ const columns =
       &.autofill {
         grid-template-columns: repeat(auto-fill, minmax(var(--_track), 1fr));
       }
+    }
+    @keyframes masonry-loop {
+      to { translate: 0 -100%; }
     }
   }
 </style>

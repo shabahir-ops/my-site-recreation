@@ -286,7 +286,11 @@ if (import.meta.env.DEV && render) {
         z-index: -2;
         inset: 15% 5% -2% 0;
         background: var(--feature-shadow, rgb(0 0 0 / 3%));
-        transform: rotate(var(--feature-tilt, -4deg));
+        rotate: calc(var(--feature-tilt, -4deg) * var(--feature-lift, 1));
+        opacity: var(--feature-lift, 1);
+      }
+      &::after, & > .card_content, & > .card_visual {
+        translate: 0 calc((1 - var(--feature-lift, 1)) * .875rem);
       }
       &::after {
         z-index: -1;
