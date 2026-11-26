@@ -1,5 +1,6 @@
 ---
 import { Font } from "astro:assets";
+import "lenis/dist/lenis.css";
 import { SITE_NAME, SITE_DESCRIPTION } from "@/consts.ts";
 import { isNoindexRoute } from "@/utils/seo.ts";
 import type { SeoProps } from "@/types.ts";
@@ -47,3 +48,15 @@ const socialImage = new URL(image, Astro.site);
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" href="/favicon.ico" />
 <meta name="generator" content={Astro.generator} />
+
+<script>
+  import Lenis from "lenis";
+
+  new Lenis({
+    autoRaf: true,
+    anchors: true,
+    allowNestedScroll: true,
+    autoToggle: true,
+    prevent: (element) => element.matches("dialog[open]"),
+  });
+</script>
